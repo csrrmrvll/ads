@@ -5,7 +5,6 @@
 #include <map>
 #include <set>
 #include <tuple>
-
 #include "Csr.hh"
 
 using namespace std;
