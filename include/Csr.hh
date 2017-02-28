@@ -3,6 +3,7 @@
 
 #include "Algorithm.hh"
 #include "Assoc_vector.hh"
+#include "Heap.h"
 #include "OutStreamable.hh"
 #include "Type_info.hh"
 #include "Type_manip.hh"

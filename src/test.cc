@@ -27,7 +27,7 @@ int main()
         cout << "Not found!: a" << endl;
 
     auto fun = [](int a){ return a < 10; };
-    if (find_if(br,fun).second)
+    if (findIf(br,fun).second)
         cout << "Found!: b" << endl;
 
     if (copy_if(ar.begin(),ar.end(),br.begin(),fun) == br.end())
@@ -45,21 +45,21 @@ int main()
         cout << "Not found!: a" << endl;
 
     auto fun2 = [&](const std::pair<int,int> & p){ return p < ten; };
-    if (find_if(iavec,fun2).second)
+    if (findIf(iavec,fun2).second)
         cout << "Found!: b" << endl;
 
     std::map<int,int> imap(pairs.begin(),pairs.end());
     if (find(imap,ten).second == false)
         cout << "Not found!: a" << endl;
 
-    if (find_if(imap,fun2).second)
+    if (findIf(imap,fun2).second)
         cout << "Found!: b" << endl;
 
     std::set<int> iset(ar.begin(),ar.end());
     if (find(iset,10).second == false)
         cout << "Not found!: a" << endl;
 
-    if (find_if(iset,fun).second)
+    if (findIf(iset,fun).second)
         cout << "Found!: b" << endl;
 
     copy(br.begin(),br.end(),ostream_iterator<double>(cout, " "));

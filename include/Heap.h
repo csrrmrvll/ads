@@ -180,9 +180,8 @@ public:
 
     iterator erase(const value_type & v)
     {
-        auto    first = lower_bound(begin(this->cont_),end(this->cont_),v,this->comp_),
-                last = upper_bound(begin(this->cont_),end(this->cont_),v,this->comp_);
-        return this->cont_.erase(first,last);
+        auto range = std::equal_range(begin(this->cont_),end(this->cont_),v,this->comp_);
+        return this->cont_.erase(range.first,range.second);
     }
 
 private:

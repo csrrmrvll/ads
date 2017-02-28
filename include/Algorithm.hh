@@ -58,7 +58,7 @@ namespace csr
     }
 
     template<typename Container,typename UnaryPredicate>
-    std::pair<typename Container::const_iterator,bool> find_if(const Container & c, UnaryPredicate p)
+    std::pair<typename Container::const_iterator,bool> findIf(const Container & c, UnaryPredicate p)
     {
         auto    last = end(c),
                 pos = std::find_if(begin(c),last,p);
@@ -66,7 +66,17 @@ namespace csr
         return std::make_pair(pos,found);
     }
 
-    template<typename T> inline bool swapIf(T & x, T & y, bool b)
+    template<typename Container,typename UnaryPredicate>
+    std::pair<typename Container::const_iterator,bool> findIfNot(const Container & c, UnaryPredicate p)
+    {
+        auto    last = end(c),
+                pos = std::find_if_not(begin(c),last,p);
+        bool found = (pos != last);
+        return std::make_pair(pos,found);
+    }
+
+    template<typename T>
+    bool swapIf(T & x, T & y, bool b)
     {
         if (b == false)
         {
@@ -76,7 +86,8 @@ namespace csr
         return true;
     }
 
-    template<class T,typename BinaryPredicate> inline bool swapIf(T & x, T & y, BinaryPredicate p)
+    template<class T,typename BinaryPredicate>
+    bool swapIf(T & x, T & y, BinaryPredicate p)
     {
         if (p(x,y) == false) // overloaded operator()
         {
@@ -84,17 +95,6 @@ namespace csr
         }
         std::swap(x,y);
         return true;
-    }
-
-    template<typename ConvToNum> int signo(const ConvToNum c)
-    {
-        if (c > 0)
-            return 1;
-
-        if (c < 0)
-            return -1;
-
-        return 0;
     }
 }
 
