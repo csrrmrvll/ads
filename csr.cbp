@@ -59,48 +59,14 @@
 			<Add option="-Wall" />
 			<Add directory="." />
 		</Compiler>
-		<Unit filename="include/Abstract_factory.hh" />
-		<Unit filename="include/Algorithm.hh" />
-		<Unit filename="include/Arg.hh" />
-		<Unit filename="include/Assignable.hh" />
 		<Unit filename="include/Assoc_vector.hh" />
-		<Unit filename="include/Bind_first.hh" />
-		<Unit filename="include/Chain.hh" />
-		<Unit filename="include/Crtp.hh" />
-		<Unit filename="include/Csr.hh" />
-		<Unit filename="include/Ctcheck.hh" />
-		<Unit filename="include/Exception.hh" />
-		<Unit filename="include/Factory.hh" />
-		<Unit filename="include/Functor.hh" />
-		<Unit filename="include/Functor_handler.hh" />
-		<Unit filename="include/Heap.h" />
-		<Unit filename="include/Hierarchy_generators.hh" />
-		<Unit filename="include/Iterator.hh" />
-		<Unit filename="include/Light_container.hh" />
-		<Unit filename="include/Math.hh" />
-		<Unit filename="include/Mem_fun_handler.hh" />
-		<Unit filename="include/Null.hh" />
-		<Unit filename="include/OutStreamable.hh" />
-		<Unit filename="include/Params_list.hh" />
-		<Unit filename="include/Placeholders.hh" />
-		<Unit filename="include/Policies.hh" />
-		<Unit filename="include/Select.hh" />
-		<Unit filename="include/Super_sub_type.hh" />
-		<Unit filename="include/Type_info.hh" />
-		<Unit filename="include/Type_manip.hh" />
-		<Unit filename="include/Type_traits.hh" />
-		<Unit filename="include/Typelist.hh" />
-		<Unit filename="include/Typelist_operations.hh" />
-		<Unit filename="include/Unit_test.h" />
-		<Unit filename="include/Visitor.hh" />
-		<Unit filename="include/Visitor_test.hh" />
-		<Unit filename="include/Void_t.hh" />
-		<Unit filename="include/bind.hh" />
-		<Unit filename="include/factory_test.hh" />
-		<Unit filename="include/parms_list.hh" />
-		<Unit filename="src/Type_info.cc" />
+		<Unit filename="include/algorithm.h" />
+		<Unit filename="include/csr.h" />
+		<Unit filename="include/heap.h" />
+		<Unit filename="include/ostreamable.h" />
+		<Unit filename="include/range.h" />
 		<Unit filename="src/test.cc" />
-		<Unit filename="src/visitor_test.cc" />
+		<Unit filename="src/test.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

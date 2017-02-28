@@ -1,5 +1,5 @@
-#ifndef ALGORITHM_H_INCLUDED
-#define ALGORITHM_H_INCLUDED
+#ifndef ADS_ALGORITHM_H
+#define ADS_ALGORITHM_H
 
 #include <algorithm>
 #include <iterator>
@@ -8,7 +8,7 @@
 #define NOMINMAX
 #endif
 
-namespace csr
+namespace ads
 {
     template<typename Container,typename UnaryPredicate>
     bool allOf(const Container & c, UnaryPredicate p)
@@ -98,4 +98,4 @@ namespace csr
     }
 }
 
-#endif // ALGORITHM_H_INCLUDED
+#endif // ADS_ALGORITHM_H

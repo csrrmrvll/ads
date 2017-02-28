@@ -5,8 +5,9 @@
 #include <functional>
 #include <vector>
 #include <utility>
+#include <range>
 
-namespace csr
+namespace ads
 {
 ////////////////////////////////////////////////////////////////////////////////
 // class template assoc_vector_compare

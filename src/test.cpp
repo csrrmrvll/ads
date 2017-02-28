@@ -5,12 +5,24 @@
 #include <map>
 #include <set>
 #include <tuple>
-#include "Csr.hh"
+#include "algorithm.h"
+#include "ostreamable.h"
+#include "range.h"
 
 using namespace std;
-using namespace csr;
+using namespace ads;
 
 void test_func(int a) { cout << "A: " << a << endl; }
+
+struct TestOutStreamable
+:   public Ostreamable<TestOutStreamable>
+{
+    std::ostream& print(std::ostream& out) const
+    {
+        out << "\tprinting test_out_streamable" << std::endl;
+        return out;
+    }
+};
 
 int main()
 {
@@ -23,7 +35,7 @@ int main()
     array<int,5> br = { 2,4,6,8,10 };
     int dummy[5];
     fill_n(dummy,5,0);
-    if (csr::find(ar,10).second == false)
+    if (find(ar,10).second == false)
         cout << "Not found!: a" << endl;
 
     auto fun = [](int a){ return a < 10; };

@@ -1,7 +1,7 @@
 #ifndef RANGE_H
 #define RANGE_H
 
-namespace csr
+namespace ads
 {
     template<typename Iterator>
     class Range
