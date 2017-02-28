@@ -2,9 +2,6 @@
 #define ALGORITHM_H_INCLUDED
 
 #include <algorithm>
-#include <functional>
-#include <iostream>
-#include <map>
 
 #ifdef _MSC_VER
 #define NOMINMAX
@@ -12,47 +9,34 @@
 
 namespace csr
 {
-    template<class Container,typename Functor> inline
-    Functor for_all(Container& c,Functor& f)
+    template<typename Container,typename Functor> inline
+    Functor forEach(Container & c, Functor & f)
     { return std::for_each(c.begin(),c.end(),f); }
 
-    //	Predicados y funciones para algoritmos.
-    template<class In,class T>
-    inline std::pair<In,bool> find_pos(In first,In last,T val)
-    {
-        In pos = std::find(first,last,val);
-        bool found = (pos != last);
-        return std::make_pair(pos,found);
-    }
-
-    template<class In,class Pred>
-    inline std::pair<In,bool> find_pos_if(In first,In last,Pred p)
-    {
-        In pos = std::find_if(first,last,p);
-        bool found = (pos != last);
-        return std::make_pair(pos,found);
-    }
-
-    // Esta sobrecarga es para usarse con std::map<Key,T>.
     template<typename Container>
-    inline std::pair<typename Container::const_iterator,bool>
-    find_pos(const Container& cont,const typename Container::value_type& val)
+    std::pair<typename Container::const_iterator,bool> find(const Container & c, const typename Container::value_type & v)
     {
-        return find_pos(cont.begin(),cont.end(),val);
+        auto    last = end(c),
+                pos = std::find(begin(c),last,v);
+        bool found = (pos != last);
+        return std::make_pair(pos,found);
     }
 
     template<typename Container,typename Predicate>
-    inline std::pair<typename Container::const_iterator,bool>
-    find_pos_if(const Container& cont,Predicate pred)
+    std::pair<typename Container::const_iterator,bool> find_if(const Container & c, Predicate p)
     {
-        return find_pos_if(cont.begin(),cont.end(),pred);
+        auto    last = end(c),
+                pos = std::find_if(begin(c),last,p);
+        bool found = (pos != last);
+        return std::make_pair(pos,found);
     }
 
     template<class T> inline bool swap_if(T *x,T *y,bool b)
     {
         if (b == false)
+        {
             return false;
-
+        }
         swap(*x,*y);
         return true;
     }
