@@ -2,6 +2,7 @@
 #define ALGORITHM_H_INCLUDED
 
 #include <algorithm>
+#include <iterator>
 
 #ifdef _MSC_VER
 #define NOMINMAX
@@ -9,9 +10,43 @@
 
 namespace csr
 {
-    template<typename Container,typename Functor> inline
-    Functor forEach(Container & c, Functor & f)
-    { return std::for_each(c.begin(),c.end(),f); }
+    template<typename Container,typename UnaryPredicate>
+    bool allOf(const Container & c, UnaryPredicate p)
+    {
+        return std::all_of(begin(c),end(c),p);
+    }
+
+    template<typename Container,typename UnaryPredicate>
+    bool anyOf(const Container & c, UnaryPredicate p)
+    {
+        return std::any_of(begin(c),end(c),p);
+    }
+
+    template<typename Container,typename UnaryPredicate>
+    bool noneOf(const Container & c, UnaryPredicate p )
+    {
+        return std::none_of(begin(c),end(c),p);
+    }
+
+    template<typename Container,typename UnaryFunction> inline
+    UnaryFunction forEach(const Container & c, UnaryFunction f)
+    {
+        return std::for_each(begin(c),end(c),f);
+    }
+
+    template<typename Container>
+    typename std::iterator_traits<typename Container::const_iterator>::difference_type
+    count(const Container & c, const typename Container::value_type & v)
+    {
+        return std::count(begin(c),end(c),v);
+    }
+
+    template<typename Container,typename UnaryPredicate>
+    typename std::iterator_traits<typename Container::const_iterator>::difference_type
+    count(const Container & c, UnaryPredicate p)
+    {
+        return std::count(begin(c),end(c),p);
+    }
 
     template<typename Container>
     std::pair<typename Container::const_iterator,bool> find(const Container & c, const typename Container::value_type & v)
@@ -22,8 +57,8 @@ namespace csr
         return std::make_pair(pos,found);
     }
 
-    template<typename Container,typename Predicate>
-    std::pair<typename Container::const_iterator,bool> find_if(const Container & c, Predicate p)
+    template<typename Container,typename UnaryPredicate>
+    std::pair<typename Container::const_iterator,bool> find_if(const Container & c, UnaryPredicate p)
     {
         auto    last = end(c),
                 pos = std::find_if(begin(c),last,p);
@@ -31,23 +66,23 @@ namespace csr
         return std::make_pair(pos,found);
     }
 
-    template<class T> inline bool swap_if(T *x,T *y,bool b)
+    template<typename T> inline bool swapIf(T & x, T & y, bool b)
     {
         if (b == false)
         {
             return false;
         }
-        swap(*x,*y);
+        std::swap(x,y);
         return true;
     }
 
-    template<class T,class Pred> inline bool swap_if(T *x,T *y,Pred p)
+    template<class T,typename BinaryPredicate> inline bool swapIf(T & x, T & y, BinaryPredicate p)
     {
-        p(*y); // needs an explicit constructor in order to work properly.
-        if (p(x) == false) // overloaded operator()
+        if (p(x,y) == false) // overloaded operator()
+        {
             return false;
-
-        swap(*x,*y);
+        }
+        std::swap(x,y);
         return true;
     }
 
