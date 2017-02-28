@@ -43,9 +43,9 @@ namespace csr
 
     template<typename Container,typename UnaryPredicate>
     typename std::iterator_traits<typename Container::const_iterator>::difference_type
-    count(const Container & c, UnaryPredicate p)
+    countIf(const Container & c, UnaryPredicate p)
     {
-        return std::count(begin(c),end(c),p);
+        return std::count_if(begin(c),end(c),p);
     }
 
     template<typename Container>
