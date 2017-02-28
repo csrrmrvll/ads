@@ -86,7 +86,7 @@ namespace csr
         return true;
     }
 
-    template<class T,typename BinaryPredicate>
+    template<typename T,typename BinaryPredicate>
     bool swapIf(T & x, T & y, BinaryPredicate p)
     {
         if (p(x,y) == false) // overloaded operator()
