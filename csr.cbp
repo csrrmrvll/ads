@@ -59,13 +59,12 @@
 			<Add option="-Wall" />
 			<Add directory="." />
 		</Compiler>
-		<Unit filename="include/Assoc_vector.hh" />
 		<Unit filename="include/algorithm.h" />
 		<Unit filename="include/csr.h" />
 		<Unit filename="include/heap.h" />
 		<Unit filename="include/ostreamable.h" />
 		<Unit filename="include/range.h" />
-		<Unit filename="src/test.cc" />
+		<Unit filename="include/sorted_vector.h" />
 		<Unit filename="src/test.cpp" />
 		<Extensions>
 			<code_completion />
