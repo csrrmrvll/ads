@@ -1,30 +1,11 @@
 #ifndef CSR_HH_INCLUDED
 #define CSR_HH_INCLUDED
 
-#include "Abstract_factory.hh"
 #include "Algorithm.hh"
-#include "Assignable.hh"
 #include "Assoc_vector.hh"
-#include "Crtp.hh"
-#include "Ctcheck.hh"
-#include "Exception.hh"
-#include "Hierarchy_generators.hh"
-#include "Iterator.hh"
-#include "Light_container.hh"
-#include "Math.hh"
-#include "Mem_fun_handler.hh"
-#include "Null.hh"
 #include "OutStreamable.hh"
-#include "Policies.hh"
-#include "parms_list.hh"
-#include "Placeholders.hh"
 #include "Type_info.hh"
 #include "Type_manip.hh"
-#include "Type_traits.hh"
-#include "Typelist.hh"
-#include "Typelist_operations.hh"
 #include "Unit_test.h"
-#include "Visitor.hh"
-#include "Void_t.hh"
 
 #endif // CSR_HH_INCLUDED
