@@ -5,7 +5,7 @@
 #include <functional>
 #include <vector>
 #include <utility>
-#include <range>
+#include "range.h"
 
 namespace ads
 {
@@ -66,7 +66,7 @@ namespace ads
         typename Comp  = std::less<Key>,
         typename Alloc = std::allocator<std::pair<Key,Value> >
     >
-    class assoc_vector
+    class sorted_vector
     :   private std::vector<std::pair<Key,Value>,Alloc>,
         private Private::assoc_vector_compare<Value,Comp>
     {
@@ -94,7 +94,7 @@ namespace ads
         :   public std::binary_function<value_type,value_type,bool>,
             private key_compare
         {
-            friend class assoc_vector;
+            friend class sorted_vector;
 
         protected:
             value_compare(key_compare pred)
@@ -106,12 +106,12 @@ namespace ads
             { return key_compare::operator()(lhs.first,rhs.first); }
         };
 
-        explicit assoc_vector(const key_compare& comp = key_compare(),
+        explicit sorted_vector(const key_compare& comp = key_compare(),
                                 const allocator_type& alloc = allocator_type())
         : base(alloc),compare_func(comp) { ; }
 
         template<typename InputIterator>
-        assoc_vector(InputIterator first,InputIterator last,
+        sorted_vector(InputIterator first,InputIterator last,
                         const key_compare& comp = key_compare(),
                         const allocator_type& alloc = allocator_type())
         :   base(first,last,alloc),compare_func(comp)
@@ -120,7 +120,7 @@ namespace ads
             std::sort(this->begin(),this->end(),me);
         }
 
-        assoc_vector& operator=(const assoc_vector& rhs)
+        sorted_vector& operator=(const sorted_vector& rhs)
         {
             rhs.swap(*this);
             return *this;
@@ -184,7 +184,7 @@ namespace ads
         void erase(iterator first,iterator last)
         { base::erase(first,last); }
 
-        void swap(assoc_vector& other)
+        void swap(sorted_vector& other)
         {
             base::swap(other);
             compare_func    &me = *this,
@@ -267,10 +267,10 @@ namespace ads
         }
 
         template <class K1, class V1, class C1, class A1>
-        friend bool operator==(const assoc_vector<K1, V1, C1, A1>& lhs,
-                                const assoc_vector<K1, V1, C1, A1>& rhs);
+        friend bool operator==(const sorted_vector<K1, V1, C1, A1>& lhs,
+                                const sorted_vector<K1, V1, C1, A1>& rhs);
 
-        bool operator<(const assoc_vector& rhs) const
+        bool operator<(const sorted_vector& rhs) const
         {
             const base& me = *this;
             const base& yo = rhs;
@@ -278,54 +278,54 @@ namespace ads
         }
 
         template <class K1, class V1, class C1, class A1>
-        friend bool operator!=(const assoc_vector<K1, V1, C1, A1>& lhs,
-                                const assoc_vector<K1, V1, C1, A1>& rhs);
+        friend bool operator!=(const sorted_vector<K1, V1, C1, A1>& lhs,
+                                const sorted_vector<K1, V1, C1, A1>& rhs);
 
         template <class K1, class V1, class C1, class A1>
-        friend bool operator>(const assoc_vector<K1, V1, C1, A1>& lhs,
-                                const assoc_vector<K1, V1, C1, A1>& rhs);
+        friend bool operator>(const sorted_vector<K1, V1, C1, A1>& lhs,
+                                const sorted_vector<K1, V1, C1, A1>& rhs);
 
         template <class K1, class V1, class C1, class A1>
-        friend bool operator>=(const assoc_vector<K1, V1, C1, A1>& lhs,
-                                const assoc_vector<K1, V1, C1, A1>& rhs);
+        friend bool operator>=(const sorted_vector<K1, V1, C1, A1>& lhs,
+                                const sorted_vector<K1, V1, C1, A1>& rhs);
 
         template <class K1, class V1, class C1, class A1>
-        friend bool operator<=(const assoc_vector<K1, V1, C1, A1>& lhs,
-                                const assoc_vector<K1, V1, C1, A1>& rhs);
+        friend bool operator<=(const sorted_vector<K1, V1, C1, A1>& lhs,
+                                const sorted_vector<K1, V1, C1, A1>& rhs);
     };
 
     template <class K, class V, class C, class A>
-    inline bool operator==(const assoc_vector<K, V, C, A>& lhs,
-                            const assoc_vector<K, V, C, A>& rhs)
+    inline bool operator==(const sorted_vector<K, V, C, A>& lhs,
+                            const sorted_vector<K, V, C, A>& rhs)
     {
         const std::vector<std::pair<K, V>, A>& me = lhs;
         return me == rhs;
     }
 
     template <class K, class V, class C, class A>
-    inline bool operator!=(const assoc_vector<K, V, C, A>& lhs,
-                            const assoc_vector<K, V, C, A>& rhs)
+    inline bool operator!=(const sorted_vector<K, V, C, A>& lhs,
+                            const sorted_vector<K, V, C, A>& rhs)
     { return !(lhs == rhs); }
 
     template <class K, class V, class C, class A>
-    inline bool operator>(const assoc_vector<K, V, C, A>& lhs,
-                            const assoc_vector<K, V, C, A>& rhs)
+    inline bool operator>(const sorted_vector<K, V, C, A>& lhs,
+                            const sorted_vector<K, V, C, A>& rhs)
     { return rhs < lhs; }
 
     template <class K, class V, class C, class A>
-    inline bool operator>=(const assoc_vector<K, V, C, A>& lhs,
-                            const assoc_vector<K, V, C, A>& rhs)
+    inline bool operator>=(const sorted_vector<K, V, C, A>& lhs,
+                            const sorted_vector<K, V, C, A>& rhs)
     { return !(lhs < rhs); }
 
     template <class K, class V, class C, class A>
-    inline bool operator<=(const assoc_vector<K, V, C, A>& lhs,
-                            const assoc_vector<K, V, C, A>& rhs)
+    inline bool operator<=(const sorted_vector<K, V, C, A>& lhs,
+                            const sorted_vector<K, V, C, A>& rhs)
     { return !(rhs < lhs); }
 
     // specialized algorithms:
     template<typename Key,typename Value,typename Comp,typename Alloc>
-    void swap(assoc_vector<Key,Value,Comp,Alloc>& lhs,
-              assoc_vector<Key,Value,Comp,Alloc>& rhs)
+    void swap(sorted_vector<Key,Value,Comp,Alloc>& lhs,
+              sorted_vector<Key,Value,Comp,Alloc>& rhs)
     { lhs.swap(rhs); }
 
 }

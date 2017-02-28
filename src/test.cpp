@@ -8,6 +8,7 @@
 #include "algorithm.h"
 #include "ostreamable.h"
 #include "range.h"
+#include "sorted_vector.h"
 
 using namespace std;
 using namespace ads;
@@ -17,17 +18,17 @@ void test_func(int a) { cout << "A: " << a << endl; }
 struct TestOutStreamable
 :   public Ostreamable<TestOutStreamable>
 {
-    std::ostream& print(std::ostream& out) const
+    ostream& print(ostream& out) const
     {
-        out << "\tprinting test_out_streamable" << std::endl;
+        out << "\tprinting test_out_streamable" << endl;
         return out;
     }
 };
 
 int main()
 {
-    std::tuple<int,int,int> tup(1,1,1);
-    std::get<1>(tup);
+    tuple<int,int,int> tup(1,1,1);
+    get<1>(tup);
     TestOutStreamable tos;
     cout << tos;
 
@@ -40,34 +41,36 @@ int main()
 
     auto fun = [](int a){ return a < 10; };
     if (findIf(br,fun).second)
+    {
         cout << "Found!: b" << endl;
-
+    }
     if (copy_if(ar.begin(),ar.end(),br.begin(),fun) == br.end())
+    {
         cout << "Copied!: a in b" << endl;
-
-    std::vector<std::pair<int,int> > pairs(5);
+    }
+    vector<pair<int,int> > pairs(5);
     for (int m = 0; m < 5; ++m)
     {
-        pairs[m] = std::make_pair(m, ar[m]);
+        pairs[m] = make_pair(m, ar[m]);
     }
-    assoc_vector<int,int> iavec;
+    sorted_vector<int,int> iavec;
     iavec.insert(pairs.begin(),pairs.end());
-    std::pair<int,int> ten(4,10);
+    pair<int,int> ten(4,10);
     if (find(iavec,ten).second == false)
         cout << "Not found!: a" << endl;
 
-    auto fun2 = [&](const std::pair<int,int> & p){ return p < ten; };
+    auto fun2 = [&](const pair<int,int> & p){ return p < ten; };
     if (findIf(iavec,fun2).second)
         cout << "Found!: b" << endl;
 
-    std::map<int,int> imap(pairs.begin(),pairs.end());
+    map<int,int> imap(pairs.begin(),pairs.end());
     if (find(imap,ten).second == false)
         cout << "Not found!: a" << endl;
 
     if (findIf(imap,fun2).second)
         cout << "Found!: b" << endl;
 
-    std::set<int> iset(ar.begin(),ar.end());
+    set<int> iset(ar.begin(),ar.end());
     if (find(iset,10).second == false)
         cout << "Not found!: a" << endl;
 
