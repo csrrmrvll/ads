@@ -59,8 +59,8 @@
 			<Add option="-Wall" />
 			<Add directory="." />
 		</Compiler>
+		<Unit filename="include/ads.h" />
 		<Unit filename="include/algorithm.h" />
-		<Unit filename="include/csr.h" />
 		<Unit filename="include/heap.h" />
 		<Unit filename="include/ostreamable.h" />
 		<Unit filename="include/range.h" />

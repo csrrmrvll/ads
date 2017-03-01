@@ -5,22 +5,19 @@
 #include <map>
 #include <set>
 #include <tuple>
-#include "algorithm.h"
-#include "ostreamable.h"
-#include "range.h"
-#include "sorted_vector.h"
+#include "ads.h"
 
 using namespace std;
 using namespace ads;
 
 void test_func(int a) { cout << "A: " << a << endl; }
 
-struct TestOutStreamable
-:   public Ostreamable<TestOutStreamable>
+struct test_ostreamable
+:   public ostreamable<test_ostreamable>
 {
-    ostream& print(ostream& out) const
+    ostream & print(ostream & out) const
     {
-        out << "\tprinting test_out_streamable" << endl;
+        out << endl << "printing test_out_streamable" << endl;
         return out;
     }
 };
@@ -29,7 +26,7 @@ int main()
 {
     tuple<int,int,int> tup(1,1,1);
     get<1>(tup);
-    TestOutStreamable tos;
+    test_ostreamable tos;
     cout << tos;
 
     array<int,5> ar = { 1,2,3,4,5 };
@@ -37,18 +34,20 @@ int main()
     int dummy[5];
     fill_n(dummy,5,0);
     if (find(ar,10).second == false)
-        cout << "Not found!: a" << endl;
-
-    auto fun = [](int a){ return a < 10; };
-    if (findIf(br,fun).second)
     {
-        cout << "Found!: b" << endl;
+        cout << "Not found!: a" << endl;
+    }
+    auto fun = [](int a){ return a < 10; };
+    auto p = findIf(br,fun);
+    if (p.second)
+    {
+        cout << "Found!: " << *p.first << endl;
     }
     if (copy_if(ar.begin(),ar.end(),br.begin(),fun) == br.end())
     {
         cout << "Copied!: a in b" << endl;
     }
-    vector<pair<int,int> > pairs(5);
+    vector<pair<int,int>> pairs(5);
     for (int m = 0; m < 5; ++m)
     {
         pairs[m] = make_pair(m, ar[m]);
@@ -57,26 +56,32 @@ int main()
     iavec.insert(pairs.begin(),pairs.end());
     pair<int,int> ten(4,10);
     if (find(iavec,ten).second == false)
+    {
         cout << "Not found!: a" << endl;
-
+    }
     auto fun2 = [&](const pair<int,int> & p){ return p < ten; };
     if (findIf(iavec,fun2).second)
+    {
         cout << "Found!: b" << endl;
-
+    }
     map<int,int> imap(pairs.begin(),pairs.end());
     if (find(imap,ten).second == false)
+    {
         cout << "Not found!: a" << endl;
-
+    }
     if (findIf(imap,fun2).second)
+    {
         cout << "Found!: b" << endl;
-
+    }
     set<int> iset(ar.begin(),ar.end());
     if (find(iset,10).second == false)
+    {
         cout << "Not found!: a" << endl;
-
+    }
     if (findIf(iset,fun).second)
+    {
         cout << "Found!: b" << endl;
-
+    }
     copy(br.begin(),br.end(),ostream_iterator<double>(cout, " "));
     cout << endl << "Presiona intro para salir" << endl;
     cin.get();

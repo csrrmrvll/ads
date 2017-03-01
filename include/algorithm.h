@@ -10,6 +10,18 @@
 
 namespace ads
 {
+    template<typename Container>
+    bool is_end(const Container & c, typename Container::const_iterator it)
+    {
+        return end(c) == it;
+    }
+
+    template<typename Container>
+    bool not_end(const Container & c, typename Container::const_iterator it)
+    {
+        return !is_end(c,it);
+    }
+
     template<typename Container,typename UnaryPredicate>
     bool allOf(const Container & c, UnaryPredicate p)
     {
@@ -51,28 +63,22 @@ namespace ads
     template<typename Container>
     std::pair<typename Container::const_iterator,bool> find(const Container & c, const typename Container::value_type & v)
     {
-        auto    last = end(c),
-                pos = std::find(begin(c),last,v);
-        bool found = (pos != last);
-        return std::make_pair(pos,found);
+        auto it = std::find(begin(c),end(c),v);
+        return std::make_pair(it,not_end(c,it));
     }
 
     template<typename Container,typename UnaryPredicate>
     std::pair<typename Container::const_iterator,bool> findIf(const Container & c, UnaryPredicate p)
     {
-        auto    last = end(c),
-                pos = std::find_if(begin(c),last,p);
-        bool found = (pos != last);
-        return std::make_pair(pos,found);
+        auto it = std::find_if(begin(c),end(c),p);
+        return std::make_pair(it,not_end(c,it));
     }
 
     template<typename Container,typename UnaryPredicate>
     std::pair<typename Container::const_iterator,bool> findIfNot(const Container & c, UnaryPredicate p)
     {
-        auto    last = end(c),
-                pos = std::find_if_not(begin(c),last,p);
-        bool found = (pos != last);
-        return std::make_pair(pos,found);
+        auto it = std::find_if_not(begin(c),end(c),p);
+        return std::make_pair(it,not_end(c,it));
     }
 
     template<typename T>

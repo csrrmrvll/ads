@@ -38,12 +38,6 @@ namespace ads
     }
 
     template<typename Iterator>
-    range<Iterator> make_range(const std::pair<Iterator,Iterator> & p)
-    {
-        return range<Iterator>(p);
-    }
-
-    template<typename Iterator>
     range<Iterator> make_range(std::pair<Iterator,Iterator> && p)
     {
         return range<Iterator>(p);
