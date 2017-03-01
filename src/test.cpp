@@ -93,7 +93,7 @@ int main()
     }
     copy(br.begin(),br.end(),ostream_iterator<double>(cout, " "));
     min_heap<int> h;
-    ads::range<sorted_vector<int,int>::iterator> r(begin(iavec),end(iavec));
-    ads::range<array<int,5>::iterator> r2(begin(br),end(br));
+    range<sorted_vector<int,int>::iterator> r(begin(iavec),end(iavec));
+    range<array<int,5>::iterator> r2(begin(br),end(br));
     return 0;
 }
