@@ -1,20 +1,53 @@
 #ifndef RANGE_H
 #define RANGE_H
 
+#include <utility>
+
 namespace ads
 {
     template<typename Iterator>
-    class Range
+    class range
+    :   private std::pair<Iterator,Iterator>
     {
+        using base = std::pair<Iterator,Iterator>;
     public:
         using iterator = Iterator;
-        iterator begin() const { return this->begin_; }
-        iterator end() const { return this->end_; }
+        range(Iterator first, Iterator last)
+        :   base{first,last}
+        {
+        }
 
-    private:
-        iterator    begin_,
-                    end_;
+        range(const std::pair<Iterator,Iterator> & p)
+        :   base{p}
+        {
+        }
+
+        range(std::pair<Iterator,Iterator> && p)
+        :   base{p}
+        {
+        }
+
+        iterator begin() const { return this->first; }
+        iterator end() const { return this->second; }
     };
+
+    template<typename Iterator>
+    range<Iterator> make_range(Iterator first, Iterator last)
+    {
+        return range<Iterator>(first, last);
+    }
+
+    template<typename Iterator>
+    range<Iterator> make_range(const std::pair<Iterator,Iterator> & p)
+    {
+        return range<Iterator>(p);
+    }
+
+    template<typename Iterator>
+    range<Iterator> make_range(std::pair<Iterator,Iterator> && p)
+    {
+        return range<Iterator>(p);
+    }
 }
 
 #endif // RANGE_H

@@ -9,21 +9,16 @@
 
 namespace ads
 {
-////////////////////////////////////////////////////////////////////////////////
-// class template assoc_vector_compare
-// Used by assoc_vector
-////////////////////////////////////////////////////////////////////////////////
-
     namespace Private
     {
         template<typename Value,typename Comp>
         class assoc_vector_compare
         :   public Comp
         {
-            typedef Value                                value;
-            typedef Comp                                 compare_func;
-            typedef typename Comp::first_argument_type  first_argument_type;
-            typedef std::pair<first_argument_type,value> data;
+            typedef Value                                   value;
+            typedef Comp                                    compare_func;
+            typedef typename Comp::first_argument_type      first_argument_type;
+            typedef std::pair<first_argument_type,value>    data;
 
         public:
             assoc_vector_compare() { ; }
@@ -48,17 +43,6 @@ namespace ads
         };
     }
 
-////////////////////////////////////////////////////////////////////////////////
-// class template assoc_vector
-// An associative vector built as a syntactic drop-in replacement for std::map
-// BEWARE: assoc_vector doesn't respect all map's guarantees,the most important
-// being:
-// * iterators are invalidated by insert and erase operations
-// * the complexity of insert/erase is O(N) not O(log N)
-// * value_type is std::pair<Key,Value> not std::pair<const Key,Value>
-// * iterators are random
-////////////////////////////////////////////////////////////////////////////////
-
     template
     <
         typename Key,
@@ -74,11 +58,11 @@ namespace ads
         typedef Private::assoc_vector_compare<Value,Comp>   compare_func;
 
     public:
-        typedef Key                                      key_type;
-        typedef Value                                    mapped_type;
+        typedef Key                                     key_type;
+        typedef Value                                   mapped_type;
         typedef typename base::value_type               value_type;
-        typedef Comp                                     key_compare;
-        typedef Alloc                                    allocator_type;
+        typedef Comp                                    key_compare;
+        typedef Alloc                                   allocator_type;
         typedef typename Alloc::reference               reference;
         typedef typename Alloc::const_reference         const_reference;
         typedef typename base::iterator                 iterator;
@@ -166,7 +150,7 @@ namespace ads
 
         template<typename InputIterator>
         void insert(InputIterator first,InputIterator last)
-        { for (   ; first != last; ++first) { this->insert(*first); } }
+        { for (auto v : make_range(first, last)) { this->insert(v); } }
 
         void erase(iterator pos)
         { base::erase(pos); }
@@ -175,8 +159,9 @@ namespace ads
         {
             iterator i(this->find(k));
             if (i == this->end())
+            {
                 return 0;
-
+            }
             this->erase(i);
             return 1;
         }
@@ -268,59 +253,51 @@ namespace ads
 
         template <class K1, class V1, class C1, class A1>
         friend bool operator==(const sorted_vector<K1, V1, C1, A1>& lhs,
-                                const sorted_vector<K1, V1, C1, A1>& rhs);
-
-        bool operator<(const sorted_vector& rhs) const
+                                const sorted_vector<K1, V1, C1, A1>& rhs)
         {
-            const base& me = *this;
-            const base& yo = rhs;
-            return me < yo;
+            const base  & a = lhs,
+                        & b = rhs;
+            return a == b;
         }
+
 
         template <class K1, class V1, class C1, class A1>
         friend bool operator!=(const sorted_vector<K1, V1, C1, A1>& lhs,
-                                const sorted_vector<K1, V1, C1, A1>& rhs);
+                                const sorted_vector<K1, V1, C1, A1>& rhs)
+        {
+            return !(lhs == rhs);
+        }
 
         template <class K1, class V1, class C1, class A1>
-        friend bool operator>(const sorted_vector<K1, V1, C1, A1>& lhs,
-                                const sorted_vector<K1, V1, C1, A1>& rhs);
-
-        template <class K1, class V1, class C1, class A1>
-        friend bool operator>=(const sorted_vector<K1, V1, C1, A1>& lhs,
-                                const sorted_vector<K1, V1, C1, A1>& rhs);
+        friend bool operator<(const sorted_vector<K1, V1, C1, A1>& lhs,
+                                const sorted_vector<K1, V1, C1, A1>& rhs)
+        {
+            const base  & a = lhs,
+                        & b = rhs;
+            return a < b;
+        }
 
         template <class K1, class V1, class C1, class A1>
         friend bool operator<=(const sorted_vector<K1, V1, C1, A1>& lhs,
-                                const sorted_vector<K1, V1, C1, A1>& rhs);
+                                const sorted_vector<K1, V1, C1, A1>& rhs)
+        {
+            return lhs < rhs || lhs == rhs;
+        }
+
+        template <class K1, class V1, class C1, class A1>
+        friend bool operator>(const sorted_vector<K1, V1, C1, A1>& lhs,
+                                const sorted_vector<K1, V1, C1, A1>& rhs)
+        {
+            return !(lhs <= rhs);
+        }
+
+        template <class K1, class V1, class C1, class A1>
+        friend bool operator>=(const sorted_vector<K1, V1, C1, A1>& lhs,
+                                const sorted_vector<K1, V1, C1, A1>& rhs)
+        {
+            return !(lhs < rhs);
+        }
     };
-
-    template <class K, class V, class C, class A>
-    inline bool operator==(const sorted_vector<K, V, C, A>& lhs,
-                            const sorted_vector<K, V, C, A>& rhs)
-    {
-        const std::vector<std::pair<K, V>, A>& me = lhs;
-        return me == rhs;
-    }
-
-    template <class K, class V, class C, class A>
-    inline bool operator!=(const sorted_vector<K, V, C, A>& lhs,
-                            const sorted_vector<K, V, C, A>& rhs)
-    { return !(lhs == rhs); }
-
-    template <class K, class V, class C, class A>
-    inline bool operator>(const sorted_vector<K, V, C, A>& lhs,
-                            const sorted_vector<K, V, C, A>& rhs)
-    { return rhs < lhs; }
-
-    template <class K, class V, class C, class A>
-    inline bool operator>=(const sorted_vector<K, V, C, A>& lhs,
-                            const sorted_vector<K, V, C, A>& rhs)
-    { return !(lhs < rhs); }
-
-    template <class K, class V, class C, class A>
-    inline bool operator<=(const sorted_vector<K, V, C, A>& lhs,
-                            const sorted_vector<K, V, C, A>& rhs)
-    { return !(rhs < lhs); }
 
     // specialized algorithms:
     template<typename Key,typename Value,typename Comp,typename Alloc>
