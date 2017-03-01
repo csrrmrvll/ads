@@ -1,12 +1,13 @@
 #ifndef ADS_ALGORITHM_H
 #define ADS_ALGORITHM_H
 
-#include <algorithm>
-#include <iterator>
-
 #ifdef _MSC_VER
 #define NOMINMAX
 #endif
+
+#include <algorithm>
+#include <iterator>
+#include "range.h"
 
 namespace ads
 {
@@ -67,9 +68,23 @@ namespace ads
 
     template<typename Container,typename UnaryPredicate>
     typename std::iterator_traits<typename Container::const_iterator>::difference_type
-    countIf(const Container & c, UnaryPredicate p)
+    count_if(const Container & c, UnaryPredicate p)
     {
         return std::count_if(begin(c),end(c),p);
+    }
+
+    template<typename Container>
+    range<typename Container::iterator>
+    equal_range(const Container & c, const typename Container::value_type & v)
+    {
+        return std::equal_range(begin(c),end(c),v);
+    }
+
+    template<typename Container,typename UnaryPredicate>
+    range<typename Container::iterator>
+    equal_range(const Container & c, const typename Container::value_type & v, UnaryPredicate p)
+    {
+        return std::equal_range(begin(c),end(c),v,p);
     }
 
     template<typename Container>
@@ -112,6 +127,20 @@ namespace ads
     void iota(Container & c, T value)
     {
         return std::iota(begin(c),end(c),value);
+    }
+
+    template<typename Container>
+    range<typename Container::iterator>
+    lower_bound(const Container & c, const typename Container::value_type & v)
+    {
+        return std::lower_bound(begin(c),end(c),v);
+    }
+
+    template<typename Container,typename UnaryPredicate>
+    range<typename Container::iterator>
+    upper_bound(const Container & c, const typename Container::value_type & v, UnaryPredicate p)
+    {
+        return std::upper_bound(begin(c),end(c),v,p);
     }
 
     template<typename T>

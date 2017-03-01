@@ -192,8 +192,8 @@ namespace ads
 
         iterator erase(const value_type & v)
         {
-            auto range = std::equal_range(begin(this->cont_),end(this->cont_),v,this->comp_);
-            return this->cont_.erase(range.first,range.second);
+            auto r = equal_range(this->cont_,v,this->comp_);
+            return this->cont_.erase(r.begin(),r.end());
         }
 
     private:
