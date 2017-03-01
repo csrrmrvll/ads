@@ -1,5 +1,5 @@
-#ifndef ASSOC_VECTOR_HH_INCLUDED
-#define ASSOC_VECTOR_HH_INCLUDED
+#ifndef ADS_SORTED_VECTOR_H
+#define ADS_SORTED_VECTOR_H
 
 #include <algorithm>
 #include <functional>
@@ -307,4 +307,4 @@ namespace ads
 
 }
 
-#endif // ASSOC_VECTOR_HH_INCLUDED
+#endif // ADS_SORTED_VECTOR_H

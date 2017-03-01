@@ -1,5 +1,5 @@
-#ifndef CSR_HH_INCLUDED
-#define CSR_HH_INCLUDED
+#ifndef ADS_H
+#define ADS_H
 
 #include "algorithm.h"
 #include "heap.h"
@@ -8,4 +8,4 @@
 #include "numerical_range.h"
 #include "sorted_vector.h"
 
-#endif // CSR_HH_INCLUDED
+#endif // ADS_H
