@@ -120,7 +120,6 @@ namespace ads
         if (b)
         {
             std::swap(x,y);
-            return false;
         }
         return b;
     }
@@ -129,7 +128,7 @@ namespace ads
     bool swapIf(T & x, T & y, BinaryPredicate p)
     {
         bool result = p(x,y);
-        if (p(x,y)) // overloaded operator()
+        if (p(x,y))
         {
             std::swap(x,y);
         }
