@@ -144,7 +144,7 @@ namespace ads
     }
 
     template<typename T>
-    bool swapIf(T & x, T & y, bool b)
+    bool swap_if(T & x, T & y, bool b)
     {
         if (b)
         {
@@ -154,7 +154,7 @@ namespace ads
     }
 
     template<typename T,typename BinaryPredicate>
-    bool swapIf(T & x, T & y, BinaryPredicate p)
+    bool swap_if(T & x, T & y, BinaryPredicate p)
     {
         bool result = p(x,y);
         if (p(x,y))
