@@ -53,7 +53,7 @@ namespace ads
     }
 
     template<typename Container,typename OutputIterator,typename UnaryPredicate>
-    OutputIterator countIf(const Container & c, OutputIterator oit, UnaryPredicate p)
+    OutputIterator copy_if(const Container & c, OutputIterator oit, UnaryPredicate p)
     {
         return std::copy_if(begin(c),end(c),oit,p);
     }
@@ -106,6 +106,12 @@ namespace ads
     {
         auto it = std::find_if_not(begin(c),end(c),p);
         return make_find_result(c,it);
+    }
+
+    template<typename Container, typename T>
+    void iota(Container & c, T value)
+    {
+        return std::iota(begin(c),end(c),value);
     }
 
     template<typename T>

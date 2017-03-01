@@ -29,15 +29,6 @@ namespace ads
         return range<Iterator>(first, last);
     }
 
-    range<std::vector<int>::const_iterator> make_range(int first, int last)
-    {
-        using Ivector = std::vector<int>;
-        typename Ivector::size_type size = last - first + 1;
-        Ivector v(size);
-        std::iota(begin(v),end(v),first);
-        return range<Ivector::const_iterator>(begin(v),end(v));
-    }
-
     template<typename Container>
     range<typename Container::const_iterator> make_range(const Container & c)
     {

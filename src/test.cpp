@@ -57,7 +57,7 @@ int main()
         << endl << make_range(br) << endl;
     }
     vector<pair<int,int>> pairs(5);
-    for (auto m : make_range(0,4))
+    for (auto m : make_numerical_range(0,4))
     {
         pairs[m] = make_pair(m + 1, ar[m]);
     }
