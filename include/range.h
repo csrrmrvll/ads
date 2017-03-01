@@ -35,10 +35,10 @@ namespace ads
         return range<typename Container::const_iterator>(begin(c),end(c));
     }
 
-    template<typename Container>
-    range<typename Container::iterator> make_range(range_pair<typename Container::const_iterator> && p)
+    template<typename Iterator>
+    range<Iterator> make_range(range_pair<Iterator> && p)
     {
-        return range<Container>(p);
+        return range<Iterator>(p);
     }
 }
 

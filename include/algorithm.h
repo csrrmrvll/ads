@@ -81,10 +81,10 @@ namespace ads
     }
 
     template<typename Container,typename UnaryPredicate>
-    range<typename Container::iterator>
+    range<typename Container::const_iterator>
     equal_range(const Container & c, const typename Container::value_type & v, UnaryPredicate p)
     {
-        return std::equal_range(begin(c),end(c),v,p);
+        return make_range(std::equal_range(begin(c),end(c),v,p));
     }
 
     template<typename Container>
@@ -130,10 +130,58 @@ namespace ads
     }
 
     template<typename Container>
+    bool is_heap(const Container & c)
+    {
+        return std::is_heap(begin(c),end(c));
+    }
+
+    template<typename Container,typename Compare>
+    bool is_heap(const Container & c, Compare comp)
+    {
+        return std::is_heap(begin(c),end(c),comp);
+    }
+
+    template<typename Container>
     range<typename Container::iterator>
     lower_bound(const Container & c, const typename Container::value_type & v)
     {
         return std::lower_bound(begin(c),end(c),v);
+    }
+
+    template<typename Container>
+    void make_heap(Container & c)
+    {
+        return std::make_heap(begin(c),end(c));
+    }
+
+    template<typename Container,typename Compare>
+    void make_heap(Container & c, Compare comp)
+    {
+        return std::make_heap(begin(c),end(c),comp);
+    }
+
+    template<typename Container>
+    void pop_heap(Container & c)
+    {
+        return std::pop_heap(begin(c),end(c));
+    }
+
+    template<typename Container,typename Compare>
+    void pop_heap(Container & c, Compare comp)
+    {
+        return std::pop_heap(begin(c),end(c),comp);
+    }
+
+    template<typename Container>
+    void push_heap(Container & c)
+    {
+        return std::push_heap(begin(c),end(c));
+    }
+
+    template<typename Container,typename Compare>
+    void push_heap(Container & c, Compare comp)
+    {
+        return std::push_heap(begin(c),end(c),comp);
     }
 
     template<typename Container,typename UnaryPredicate>
