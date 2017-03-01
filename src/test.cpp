@@ -83,6 +83,9 @@ int main()
         cout << "Found!: b" << endl;
     }
     copy(br.begin(),br.end(),ostream_iterator<double>(cout, " "));
+    min_heap<int> h;
+    ads::range<sorted_vector<int,int>::const_iterator> r(begin(iavec),end(iavec));
+    ads::range<array<int,5>::const_iterator> r2(begin(br),end(br));
     cout << endl << "Presiona intro para salir" << endl;
     cin.get();
     return 0;

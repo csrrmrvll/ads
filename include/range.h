@@ -12,7 +12,7 @@ namespace ads
         using base = std::pair<Iterator,Iterator>;
     public:
         using iterator = Iterator;
-        range(Iterator first, Iterator last)
+        range(iterator first, iterator last)
         :   base{first,last}
         {
         }

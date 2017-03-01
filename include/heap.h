@@ -4,144 +4,151 @@
 #include <algorithm>
 #include <utility>
 #include <vector>
+#include "range.h"
 
 template<typename T,typename Compare = std::less<T>,typename Container = std::vector<T>>
-class Heap;
+class heap;
 
 template<typename T>
-using MaxHeap = Heap<T>;
+using max_heap = heap<T>;
 
 template<typename T>
-using MinHeap = Heap<T,std::greater<T>>;
+using min_heap = heap<T,std::greater<T>>;
 
 template<typename T,typename Compare,typename Container>
-class Heap
+class heap
 {
 public:
-    explicit Heap()
-    :   cont_{},
-        comp_{}
-    {
-    }
+    using container_type    =   Container;
+    using iterator          =   typename Container::iterator;
+    using reference         =   typename Container::reference;
+    using const_reference   =   typename Container::const_reference;
+    using size_type         =   typename Container::size_type;
+    using value_type        =   typename Container::value_type;
 
-    explicit Heap(const Compare & comp)
-    :   cont_{},
-        comp_{comp}
-    {
-    }
-
-    explicit Heap(Compare && comp)
-    :   cont_{},
-        comp_{std::move(comp)}
-    {
-    }
-
-    explicit Heap(const Container & cont, const Compare & comp)
-    :   cont_{cont},
-        comp_{comp}
-    {
-    }
-
-    explicit Heap(const Container & cont, Compare && comp)
-    :   cont_{cont},
-        comp_{std::move(comp)}
-    {
-    }
-
-    explicit Heap(Container && cont, const Compare & comp)
+//    heap()
+//    :   cont_{},
+//        comp_{}
+//    {
+//    }
+//
+//    explicit heap(const Compare & comp)
+//    :   cont_{},
+//        comp_{comp}
+//    {
+//    }
+//
+//    explicit heap(Compare && comp)
+//    :   cont_{},
+//        comp_{std::move(comp)}
+//    {
+//    }
+//
+//    explicit heap(const Container & cont, const Compare & comp)
+//    :   cont_{cont},
+//        comp_{comp}
+//    {
+//    }
+//
+//    explicit heap(const Container & cont, Compare && comp)
+//    :   cont_{cont},
+//        comp_{std::move(comp)}
+//    {
+//    }
+//
+//    explicit heap(Container && cont, const Compare & comp)
+//    :   cont_{std::move(cont)},
+//        comp_{comp}
+//    {
+//    }
+//
+    explicit heap(Container && cont = Container(), Compare && comp = Compare())
     :   cont_{std::move(cont)},
-        comp_{comp}
-    {
-    }
-
-    explicit Heap(Container && cont, Compare && comp)
-    :   cont_{std::move(cont)},
         comp_{std::move(comp)}
     {
     }
 
-    Heap(const Heap & other) = default;
-    Heap(Heap && other) = default;
-    Heap & operator=(const Heap & other) = default;
-    Heap & operator=(Heap && other) = default;
-    ~Heap() = default;
+//    heap(range<iterator> r, Compare && comp = Compare())
+//    :   cont_{begin(r),end(r)},
+//        comp_{std::move(comp)}
+//    {
+//    }
+
+    heap(const heap & other) = default;
+    heap(heap && other) = default;
+    heap & operator=(const heap & other) = default;
+    heap & operator=(heap && other) = default;
+    ~heap() = default;
 
     template<class Alloc>
-    explicit Heap(const Alloc & alloc)
+    explicit heap(const Alloc & alloc)
     :   cont_{alloc},
         comp_{}
     {
     }
 
     template<class Alloc>
-    explicit Heap(const Alloc & alloc, const Compare & comp)
+    explicit heap(const Alloc & alloc, const Compare & comp)
     :   cont_{alloc},
         comp_{comp}
     {
     }
 
     template<class Alloc>
-    explicit Heap(const Alloc & alloc, Compare && comp)
+    explicit heap(const Alloc & alloc, Compare && comp)
     :   cont_{alloc},
         comp_{std::move(comp)}
     {
     }
 
     template<class Alloc>
-    Heap(const Container & cont, const Alloc & alloc)
+    heap(const Container & cont, const Alloc & alloc)
     :   cont_{cont, alloc},
         comp_{}
     {
     }
 
     template<class Alloc>
-    Heap(const Container & cont, const Alloc & alloc, const Compare & comp)
+    heap(const Container & cont, const Alloc & alloc, const Compare & comp)
     :   cont_{cont, alloc},
         comp_{comp}
     {
     }
 
     template<class Alloc>
-    Heap(const Container && cont, const Alloc & alloc, Compare && comp)
+    heap(const Container && cont, const Alloc & alloc, Compare && comp)
     :   cont_{cont, alloc},
         comp_{std::move(comp)}
     {
     }
 
     template<class Alloc>
-    Heap(Container && cont, const Alloc & alloc, const Compare & comp)
+    heap(Container && cont, const Alloc & alloc, const Compare & comp)
     :   cont_{std::move(cont), alloc},
         comp_{comp}
     {
     }
 
     template<class Alloc>
-    Heap(Container && cont, const Alloc & alloc, Compare && comp)
+    heap(Container && cont, const Alloc & alloc, Compare && comp)
     :   cont_{std::move(cont), alloc},
         comp_{std::move(comp)}
     {
     }
 
     template<class Alloc>
-    Heap(const Heap & other, const Alloc & alloc)
+    heap(const heap & other, const Alloc & alloc)
     :   cont_{other.cont_, alloc},
         comp_{other.comp_}
     {
     }
 
     template<class Alloc>
-    Heap(Heap && other, const Alloc & alloc)
+    heap(heap && other, const Alloc & alloc)
     :   cont_{std::move(other.cont_), alloc},
         comp_{std::move(other.comp_)}
     {
     }
-
-    using container_type = Container;
-    using iterator = typename Container::iterator;
-    using reference = typename Container::reference;
-    using const_reference = typename Container::const_reference;
-    using size_type = typename Container::size_type;
-    using value_type = typename Container::value_type;
 
     reference top() { return this->cont_.front(); }
     const_reference top() const { return this->cont_.front(); }
