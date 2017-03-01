@@ -46,6 +46,18 @@ namespace ads
         return std::for_each(begin(c),end(c),f);
     }
 
+    template<typename Container,typename OutputIterator>
+    OutputIterator copy(const Container & c, OutputIterator oit)
+    {
+        return std::copy(begin(c),end(c),oit);
+    }
+
+    template<typename Container,typename OutputIterator,typename UnaryPredicate>
+    OutputIterator countIf(const Container & c, OutputIterator oit, UnaryPredicate p)
+    {
+        return std::copy_if(begin(c),end(c),oit,p);
+    }
+
     template<typename Container>
     typename std::iterator_traits<typename Container::const_iterator>::difference_type
     count(const Container & c, const typename Container::value_type & v)
@@ -61,46 +73,61 @@ namespace ads
     }
 
     template<typename Container>
-    std::pair<typename Container::const_iterator,bool> find(const Container & c, const typename Container::value_type & v)
+    struct find_result
+    {
+        using const_iterator = typename Container::const_iterator;
+
+        const_iterator pos;
+        bool found;
+    };
+
+    template<typename Container>
+    find_result<Container> make_find_result(const Container & c, typename Container::const_iterator it)
+    {
+        return find_result<Container>{it,not_end(c,it)};
+    }
+
+    template<typename Container>
+    find_result<Container> find(const Container & c, const typename Container::value_type & v)
     {
         auto it = std::find(begin(c),end(c),v);
-        return std::make_pair(it,not_end(c,it));
+        return make_find_result(c,it);
     }
 
     template<typename Container,typename UnaryPredicate>
-    std::pair<typename Container::const_iterator,bool> findIf(const Container & c, UnaryPredicate p)
+    find_result<Container> find_if(const Container & c, UnaryPredicate p)
     {
         auto it = std::find_if(begin(c),end(c),p);
-        return std::make_pair(it,not_end(c,it));
+        return make_find_result(c,it);
     }
 
     template<typename Container,typename UnaryPredicate>
-    std::pair<typename Container::const_iterator,bool> findIfNot(const Container & c, UnaryPredicate p)
+    find_result<Container> find_if_not(const Container & c, UnaryPredicate p)
     {
         auto it = std::find_if_not(begin(c),end(c),p);
-        return std::make_pair(it,not_end(c,it));
+        return make_find_result(c,it);
     }
 
     template<typename T>
     bool swapIf(T & x, T & y, bool b)
     {
-        if (b == false)
+        if (b)
         {
+            std::swap(x,y);
             return false;
         }
-        std::swap(x,y);
-        return true;
+        return b;
     }
 
     template<typename T,typename BinaryPredicate>
     bool swapIf(T & x, T & y, BinaryPredicate p)
     {
-        if (p(x,y) == false) // overloaded operator()
+        bool result = p(x,y);
+        if (p(x,y)) // overloaded operator()
         {
-            return false;
+            std::swap(x,y);
         }
-        std::swap(x,y);
-        return true;
+        return result;
     }
 }
 

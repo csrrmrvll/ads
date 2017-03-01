@@ -22,6 +22,13 @@ struct test_ostreamable
     }
 };
 
+template<typename T>
+ostream & operator<<(ostream & os, const range<T> & r)
+{
+    copy(begin(r),end(r),ostream_iterator<typename range<T>::value_type>(os, " "));
+    return os;
+}
+
 int main()
 {
     tuple<int,int,int> tup(1,1,1);
@@ -33,60 +40,60 @@ int main()
     array<int,5> br = { 2,4,6,8,10 };
     int dummy[5];
     fill_n(dummy,5,0);
-    if (find(ar,10).second == false)
+    if (find(ar,10).found == false)
     {
-        cout << "Not found!: a" << endl;
+        cout << "10 not found! in a" << endl;
     }
     auto fun = [](int a){ return a < 10; };
-    auto p = findIf(br,fun);
-    if (p.second)
+    auto p = find_if(br,fun);
+    if (p.found)
     {
-        cout << "Found!: " << *p.first << endl;
+        cout << "Found!: " << *p.pos << endl;
     }
-    if (copy_if(ar.begin(),ar.end(),br.begin(),fun) == br.end())
+    if (copy_if(begin(ar),ar.end(),br.begin(),fun) == br.end())
     {
-        cout << "Copied!: a in b" << endl;
+        cout << "Copied a in b:" << endl
+        << endl << make_range(ar)
+        << endl << make_range(br) << endl;
     }
     vector<pair<int,int>> pairs(5);
-    for (int m = 0; m < 5; ++m)
+    for (auto m : make_range(0,4))
     {
-        pairs[m] = make_pair(m, ar[m]);
+        pairs[m] = make_pair(m + 1, ar[m]);
     }
     sorted_vector<int,int> iavec;
     iavec.insert(pairs.begin(),pairs.end());
     pair<int,int> ten(4,10);
-    if (find(iavec,ten).second == false)
+    if (find(iavec,ten).found == false)
     {
         cout << "Not found!: a" << endl;
     }
     auto fun2 = [&](const pair<int,int> & p){ return p < ten; };
-    if (findIf(iavec,fun2).second)
+    if (find_if(iavec,fun2).found)
     {
         cout << "Found!: b" << endl;
     }
     map<int,int> imap(pairs.begin(),pairs.end());
-    if (find(imap,ten).second == false)
+    if (find(imap,ten).found == false)
     {
         cout << "Not found!: a" << endl;
     }
-    if (findIf(imap,fun2).second)
+    if (find_if(imap,fun2).found)
     {
         cout << "Found!: b" << endl;
     }
     set<int> iset(ar.begin(),ar.end());
-    if (find(iset,10).second == false)
+    if (find(iset,10).found == false)
     {
         cout << "Not found!: a" << endl;
     }
-    if (findIf(iset,fun).second)
+    if (find_if(iset,fun).found)
     {
         cout << "Found!: b" << endl;
     }
     copy(br.begin(),br.end(),ostream_iterator<double>(cout, " "));
     min_heap<int> h;
-    ads::range<sorted_vector<int,int>::const_iterator> r(begin(iavec),end(iavec));
-    ads::range<array<int,5>::const_iterator> r2(begin(br),end(br));
-    cout << endl << "Presiona intro para salir" << endl;
-    cin.get();
+    ads::range<sorted_vector<int,int>::iterator> r(begin(iavec),end(iavec));
+    ads::range<array<int,5>::iterator> r2(begin(br),end(br));
     return 0;
 }

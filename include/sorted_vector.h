@@ -15,10 +15,10 @@ namespace ads
         class assoc_vector_compare
         :   public Comp
         {
-            typedef Value                                   value;
-            typedef Comp                                    compare_func;
-            typedef typename Comp::first_argument_type      first_argument_type;
-            typedef std::pair<first_argument_type,value>    data;
+            using value = Value;
+            using compare_func = Comp;
+            using typename Comp::first_argument_type;
+            using data = std::pair<first_argument_type,value>;
 
         public:
             assoc_vector_compare() { ; }
@@ -54,25 +54,25 @@ namespace ads
     :   private std::vector<std::pair<Key,Value>,Alloc>,
         private Private::assoc_vector_compare<Value,Comp>
     {
-        typedef std::vector<std::pair<Key,Value>,Alloc>     base;
-        typedef Private::assoc_vector_compare<Value,Comp>   compare_func;
+        using base = std::vector<std::pair<Key,Value>,Alloc>;
+        using compare_func = Private::assoc_vector_compare<Value,Comp>;
 
     public:
-        typedef Key                                     key_type;
-        typedef Value                                   mapped_type;
-        typedef typename base::value_type               value_type;
-        typedef Comp                                    key_compare;
-        typedef Alloc                                   allocator_type;
-        typedef typename Alloc::reference               reference;
-        typedef typename Alloc::const_reference         const_reference;
-        typedef typename base::iterator                 iterator;
-        typedef typename base::const_iterator           const_iterator;
-        typedef typename base::size_type                size_type;
-        typedef typename base::difference_type          difference_type;
-        typedef typename Alloc::pointer                 pointer;
-        typedef typename Alloc::const_pointer           const_pointer;
-        typedef typename base::reverse_iterator         reverse_iterator;
-        typedef typename base::const_reverse_iterator   const_reverse_iterator;
+        using key_compare = Comp;
+        using key_type = Key;
+        using mapped_type = Value;
+        using typename base::value_type;
+        using typename base::allocator_type;
+        using typename base::reference;
+        using typename base::const_reference;
+        using typename base::iterator;
+        using typename base::const_iterator;
+        using typename base::size_type;
+        using typename base::difference_type;
+        using typename base::pointer;
+        using typename base::const_pointer;
+        using typename base::reverse_iterator;
+        using typename base::const_reverse_iterator;
 
         class value_compare
         :   public std::binary_function<value_type,value_type,bool>,
