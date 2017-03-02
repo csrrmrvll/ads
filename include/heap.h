@@ -99,6 +99,20 @@ namespace ads
             this->make_heap();
         }
 
+        heap(std::initializer_list<value_type> il, const Compare & comp)
+        :   base(il),
+            comp_(comp)
+        {
+            this->make_heap();
+        }
+
+        heap(std::initializer_list<value_type> il, Compare && comp)
+        :   base(il),
+            comp_(std::move(comp))
+        {
+            this->make_heap();
+        }
+
         heap(const heap & other) = default;
         heap(heap && other) = default;
 
