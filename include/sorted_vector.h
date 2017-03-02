@@ -304,7 +304,6 @@ namespace ads
     void swap(sorted_vector<Key,Value,Comp,Alloc>& lhs,
               sorted_vector<Key,Value,Comp,Alloc>& rhs)
     { lhs.swap(rhs); }
-
 }
 
 #endif // ADS_SORTED_VECTOR_H

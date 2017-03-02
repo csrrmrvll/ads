@@ -36,130 +36,83 @@ namespace ads
         using base::empty;
         using base::size;
 
-
-        heap()
-        :   base{},
-            comp_{}
-        {
-        }
+        heap() = default;
 
         explicit heap(const Compare & comp)
-        :   base{},
-            comp_{comp}
+        :   base(),
+            comp_(comp)
         {
         }
 
-    //    explicit heap(Compare && comp)
-    //    :   base{},
-    //        comp_{std::move(comp)}
-    //    {
-    //    }
-    //
-    //    explicit heap(const Container & cont, const Compare & comp)
-    //    :   base{cont},
-    //        comp_{comp}
-    //    {
-    //    }
-    //
-    //    explicit heap(const Container & cont, Compare && comp)
-    //    :   base{cont},
-    //        comp_{std::move(comp)}
-    //    {
-    //    }
-    //
-    //    explicit heap(Container && cont, const Compare & comp)
-    //    :   base{std::move(cont)},
-    //        comp_{comp}
-    //    {
-    //    }
-    //
-        explicit heap(Container && cont = Container(), Compare && comp = Compare())
-        :   base{std::move(cont)},
-            comp_{std::move(comp)}
+        explicit heap(Compare && comp)
+        :   base(),
+            comp_(comp)
         {
         }
 
-    //    heap(range<iterator> r, Compare && comp = Compare())
-    //    :   base{begin(r),end(r)},
-    //        comp_{std::move(comp)}
-    //    {
-    //    }
+        explicit heap(const Container & cont)
+        :   base(std::move(cont)),
+            comp_()
+        {
+            this->make_heap();
+        }
+
+        explicit heap(Container && cont)
+        :   base(std::move(cont)),
+            comp_()
+        {
+            this->make_heap();
+        }
+
+        heap(const Container & cont, const Compare & comp)
+        :   base(cont),
+            comp_(comp)
+        {
+            this->make_heap();
+        }
+
+        heap(const Container & cont, Compare && comp)
+        :   base(cont),
+            comp_(std::move(comp))
+        {
+            this->make_heap();
+        }
+
+        heap(Container && cont, const Compare & comp)
+        :   base(std::move(cont)),
+            comp_(comp)
+        {
+            this->make_heap();
+        }
+
+        heap(Container && cont, Compare && comp)
+        :   base(std::move(cont)),
+            comp_(std::move(comp))
+        {
+            this->make_heap();
+        }
+
+        heap(std::initializer_list<value_type> il)
+        :   base(il),
+            comp_()
+        {
+            this->make_heap();
+        }
 
         heap(const heap & other) = default;
         heap(heap && other) = default;
+
         heap & operator=(const heap & other) = default;
         heap & operator=(heap && other) = default;
+        heap & operator=(std::initializer_list<value_type> il)
+        {
+            heap other(il);
+            this->swap(other);
+            this->make_heap();
+            return *this;
+        }
+
         ~heap() = default;
-
-        template<class Alloc>
-        explicit heap(const Alloc & alloc)
-        :   base(alloc),
-            comp_{}
-        {
-        }
-
-        template<class Alloc>
-        explicit heap(const Alloc & alloc, const Compare & comp)
-        :   base(alloc),
-            comp_{comp}
-        {
-        }
-
-        template<class Alloc>
-        explicit heap(const Alloc & alloc, Compare && comp)
-        :   base(alloc),
-            comp_{std::move(comp)}
-        {
-        }
-
-        template<class Alloc>
-        heap(const Container & cont, const Alloc & alloc)
-        :   base(cont, alloc),
-            comp_{}
-        {
-        }
-
-        template<class Alloc>
-        heap(const Container & cont, const Alloc & alloc, const Compare & comp)
-        :   base(cont, alloc),
-            comp_{comp}
-        {
-        }
-
-        template<class Alloc>
-        heap(const Container && cont, const Alloc & alloc, Compare && comp)
-        :   base(cont, alloc),
-            comp_{std::move(comp)}
-        {
-        }
-
-        template<class Alloc>
-        heap(Container && cont, const Alloc & alloc, const Compare & comp)
-        :   base(std::move(cont), alloc),
-            comp_{comp}
-        {
-        }
-
-        template<class Alloc>
-        heap(Container && cont, const Alloc & alloc, Compare && comp)
-        :   base(std::move(cont), alloc),
-            comp_{std::move(comp)}
-        {
-        }
-
-        template<class Alloc>
-        heap(const heap & other, const Alloc & alloc)
-        :   base(other.cont_, alloc),
-            comp_{other.comp_}
-        {
-        }
-
-        template<class Alloc>
-        heap(heap && other, const Alloc & alloc)
-        :   base(std::move(other.cont_), alloc),
-            comp_{std::move(other.comp_)}
-        {
-        }
 
         reference top() { return this->front(); }
         const_reference top() const { return this->front(); }
@@ -167,21 +120,27 @@ namespace ads
         void push(const value_type & v)
         {
             this->push_back(v);
-            push_heap(*this,this->comp_);
+            this->push_heap();
         }
 
         void push(value_type && v)
         {
             this->push_back(std::move(v));
-            push_heap(*this,this->comp_);
+            this->push_heap();
         }
 
         template<typename... Args>
         reference emplace(Args && ...args)
         {
             auto v = this->emplace_back(std::forward<Args>(args)...);
-            push_heap(*this,this->comp_);
+            this->push_heap();
             return v;
+        }
+
+        iterator erase(const value_type & v)
+        {
+            auto r = equal_range(*this,v,this->comp_);
+            return this->erase(r.begin(),r.end());
         }
 
         value_type pop()
@@ -192,15 +151,31 @@ namespace ads
             return v;
         }
 
-        iterator erase(const value_type & v)
+        void swap(heap & other)
         {
-            auto r = equal_range(*this,v,this->comp_);
-            return this->erase(r.begin(),r.end());
+            base::swap(other);
+            std::swap(this->comp_,other.comp_);
         }
 
     private:
+        void make_heap()
+        {
+            ads::make_heap(*this,this->comp_);
+        }
+
+        void push_heap()
+        {
+            ads::push_heap(*this,this->comp_);
+        }
+
         Compare comp_;
     };
+
+    template<typename Container,typename Compare>
+    void swap(heap<Container,Compare> & lhs, heap<Container,Compare> & rhs)
+    {
+        lhs.swap(rhs);
+    }
 }
 
 #endif // ADS_HEAP_H
