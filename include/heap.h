@@ -122,7 +122,6 @@ namespace ads
         {
             heap other(il);
             this->swap(other);
-            this->make_heap();
             return *this;
         }
 
@@ -154,7 +153,7 @@ namespace ads
         iterator erase(const value_type & v)
         {
             auto r = equal_range(*this,v,this->comp_);
-            return this->erase(r.begin(),r.end());
+            return this->erase(std::begin(r),std::end(r));
         }
 
         value_type pop()
