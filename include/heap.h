@@ -15,10 +15,10 @@ namespace ads
     class heap;
 
     template<typename T>
-    using max_heap = heap<T>;
+    using min_heap = heap<T>;
 
     template<typename T>
-    using min_heap = heap<T,std::vector<T>,std::greater<T>>;
+    using max_heap = heap<T,std::vector<T>,std::greater<T>>;
 
     template<typename T,typename Container,typename Compare>
     class heap
