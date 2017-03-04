@@ -135,7 +135,7 @@ namespace ads
                 i = base::insert(i,val);
                 found = false;
             }
-            return std::make_pair(i,!found);
+            return std::make_pair(i,found);
         }
 
         iterator insert(iterator pos,const value_type& val)
@@ -206,9 +206,9 @@ namespace ads
             const_iterator i(this->lower_bound(k));
             if (i != this->end() && this->operator()(k,i->first))
             {
-                i = this->end();
+                return i;
             }
-            return i;
+            return this->end();
         }
 
         size_type count(const key_type& k) const

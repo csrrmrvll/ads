@@ -8,7 +8,10 @@
 
 namespace ads
 {
-    template<typename T,typename Compare = std::less<T>,typename Container = std::vector<T>>
+    template<
+        typename T,
+        typename Container = std::vector<T>,
+        typename Compare = std::less<typename Container::value_type>>
     class heap;
 
     template<typename T>
@@ -17,150 +20,150 @@ namespace ads
     template<typename T>
     using min_heap = heap<T,std::greater<T>>;
 
-    template<typename T,typename Compare,typename Container>
+    template<typename T,typename Container,typename Compare>
     class heap
     :   private Container
     {
-        using base = Container;
-        using base::erase;
+        void sort()
+        {
+            make_heap(*this,this->comp_);
+        }
+
+        void sort_after_push()
+        {
+            push_heap(*this,this->comp_);
+        }
+
+        void insert_and_sort(auto first, auto last)
+        {
+            base::insert(base::end(),first,last);
+            this->sort();
+        }
+
     public:
+        // Member types
+        using base = Container;
         using container_type = base;
+        using value_compare = Compare;
+        using typename base::value_type;
+        using typename base::size_type;
         using typename base::iterator;
         using typename base::const_iterator;
         using typename base::reference;
         using typename base::const_reference;
-        using typename base::size_type;
-        using typename base::value_type;
-        using base::begin;
-        using base::end;
-        using base::empty;
-        using base::size;
-
-        heap() = default;
-
-        explicit heap(const Compare & comp)
-        :   base(),
+        // Member functions
+        // Constructor
+        explicit heap(const Compare & comp = Compare(), Container && cont = Container())
+        :   base(std::move(cont)),
             comp_(comp)
         {
+            this->sort();
         }
 
-        explicit heap(Compare && comp)
-        :   base(),
-            comp_(comp)
-        {
-        }
-
-        explicit heap(const Container & cont)
-        :   base(std::move(cont)),
-            comp_()
-        {
-            this->make_heap();
-        }
-
-        explicit heap(Container && cont)
-        :   base(std::move(cont)),
-            comp_()
-        {
-            this->make_heap();
-        }
-
-        heap(const Container & cont, const Compare & comp)
+        heap(const Compare & comp, const Container & cont)
         :   base(cont),
             comp_(comp)
         {
-            this->make_heap();
-        }
-
-        heap(const Container & cont, Compare && comp)
-        :   base(cont),
-            comp_(std::move(comp))
-        {
-            this->make_heap();
-        }
-
-        heap(Container && cont, const Compare & comp)
-        :   base(std::move(cont)),
-            comp_(comp)
-        {
-            this->make_heap();
-        }
-
-        heap(Container && cont, Compare && comp)
-        :   base(std::move(cont)),
-            comp_(std::move(comp))
-        {
-            this->make_heap();
+            this->sort();
         }
 
         heap(std::initializer_list<value_type> il)
-        :   base(il),
+        :   base(std::move(il)),
             comp_()
         {
-            this->make_heap();
+            this->sort();
         }
 
         heap(std::initializer_list<value_type> il, const Compare & comp)
-        :   base(il),
+        :   base(std::move(il)),
             comp_(comp)
         {
-            this->make_heap();
+            this->sort();
         }
 
         heap(std::initializer_list<value_type> il, Compare && comp)
         :   base(il),
             comp_(std::move(comp))
         {
-            this->make_heap();
+            this->sort();
         }
 
-        heap(const heap & other) = default;
-        heap(heap && other) = default;
+        template<typename Iterator>
+        heap(Iterator first, Iterator last, const Compare & comp, const Container & cont)
+        :   base(cont),
+            comp_(comp)
+        {
+            this->insert_and_sort(first,last);
+        }
 
+        template<typename Iterator>
+        heap(Iterator first, Iterator last, const Compare & comp = Compare(), Container && cont = Container())
+        :   base(std::move(cont)),
+            comp_(std::move(comp))
+        {
+            this->insert_and_sort(first,last);
+        }
+        // Copy constructor
+        heap(const heap & other) = default;
+        // Move constructor
+        heap(heap && other) = default;
+        // Copy-assignment operator
         heap & operator=(const heap & other) = default;
+        // Move-assignment operator
         heap & operator=(heap && other) = default;
+        // Assignment from initializer list operator
         heap & operator=(std::initializer_list<value_type> il)
         {
             heap other(il);
             this->swap(other);
             return *this;
         }
-
+        // Destructor
         ~heap() = default;
-
+        // Access
         reference top() { return this->front(); }
+
         const_reference top() const { return this->front(); }
 
+        using base::begin;
+        using base::end;
+        using base::cbegin;
+        using base::cend;
+        // Capacity
+        using base::empty;
+        using base::size;
+        // Modifiers
         void push(const value_type & v)
         {
             this->push_back(v);
-            this->push_heap();
+            this->sort_after_push();
         }
 
         void push(value_type && v)
         {
             this->push_back(std::move(v));
-            this->push_heap();
+            this->sort_after_push();
         }
 
         template<typename... Args>
-        reference emplace(Args && ...args)
+        void emplace(Args && ...args)
         {
             auto v = this->emplace_back(std::forward<Args>(args)...);
-            this->push_heap();
+            this->sort_after_push();
             return v;
         }
 
         iterator erase(const value_type & v)
         {
             auto r = equal_range(*this,v,this->comp_);
-            return this->erase(std::begin(r),std::end(r));
+            return base::erase(std::begin(r),std::end(r));
         }
 
         value_type pop()
         {
             auto v = this->top();
             pop_heap(*this,this->comp_);
-            this->pop_back();
+            base::pop_back();
             return v;
         }
 
@@ -171,16 +174,6 @@ namespace ads
         }
 
     private:
-        void make_heap()
-        {
-            ads::make_heap(*this,this->comp_);
-        }
-
-        void push_heap()
-        {
-            ads::push_heap(*this,this->comp_);
-        }
-
         Compare comp_;
     };
 
