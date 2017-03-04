@@ -126,9 +126,13 @@ namespace ads
         const_reference top() const { return this->front(); }
 
         using base::begin;
-        using base::end;
         using base::cbegin;
+        using base::rbegin;
+        using base::crbegin;
+        using base::end;
         using base::cend;
+        using base::rend;
+        using base::crend;
         // Capacity
         using base::empty;
         using base::size;

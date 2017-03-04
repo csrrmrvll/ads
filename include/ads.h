@@ -3,6 +3,7 @@
 
 #include "algorithm.h"
 #include "heap.h"
+#include "key_value.h"
 #include "ostreamable.h"
 #include "range.h"
 #include "numerical_range.h"

@@ -1,309 +1,207 @@
 #ifndef ADS_SORTED_VECTOR_H
 #define ADS_SORTED_VECTOR_H
 
-#include <algorithm>
-#include <functional>
-#include <vector>
 #include <utility>
+#include <vector>
+#include "algorithm.h"
 #include "range.h"
 
 namespace ads
 {
-    namespace Private
-    {
-        template<typename Value,typename Comp>
-        class assoc_vector_compare
-        :   public Comp
-        {
-            using value = Value;
-            using compare_func = Comp;
-            using typename Comp::first_argument_type;
-            using data = std::pair<first_argument_type,value>;
-
-        public:
-            assoc_vector_compare() { ; }
-
-            assoc_vector_compare(const compare_func& src)
-            :   compare_func(src) { ; }
-
-            bool operator()(const first_argument_type& lhs,
-                                const first_argument_type& rhs) const
-            { return compare_func::operator()(lhs,rhs); }
-
-            bool operator()(const data& lhs,const data& rhs) const
-            { return operator()(lhs.first,rhs.first); }
-
-            bool operator()(const data& lhs,
-                                const first_argument_type& rhs) const
-            { return operator()(lhs.first,rhs); }
-
-            bool operator()(const first_argument_type& lhs,
-                                const data& rhs) const
-            { return operator()(lhs,rhs.first); }
-        };
-    }
-
     template
     <
-        typename Key,
-        typename Value,
-        typename Comp  = std::less<Key>,
-        typename Alloc = std::allocator<std::pair<Key,Value> >
+        typename T,
+        typename Container = std::vector<T>,
+        typename Compare = std::less<T>
     >
+    class sorted_vector;
+
+    template<typename T>
+    using increase_sequence = sorted_vector<T>;
+
+    template<typename T>
+    using decrease_sequence = sorted_vector<T,std::vector<T>,std::greater<T>>;
+
+    template<typename T,typename Container,typename Compare>
     class sorted_vector
-    :   private std::vector<std::pair<Key,Value>,Alloc>,
-        private Private::assoc_vector_compare<Value,Comp>
+    :   private Container,
+        private Compare
     {
-        using base = std::vector<std::pair<Key,Value>,Alloc>;
-        using compare_func = Private::assoc_vector_compare<Value,Comp>;
+        void sort()
+        {
+            cont & cnt = *this;
+            comp & cmp = *this;
+            make_heap(cnt,cmp);
+        }
+
+        void sort_after_push()
+        {
+            cont & cnt = *this;
+            comp & cmp = *this;
+            push_heap(cnt,cmp);
+        }
+
+        using cont = Container;
+        using comp = Compare;
 
     public:
-        using key_compare = Comp;
-        using key_type = Key;
-        using mapped_type = Value;
-        using typename base::value_type;
-        using typename base::allocator_type;
-        using typename base::reference;
-        using typename base::const_reference;
-        using typename base::iterator;
-        using typename base::const_iterator;
-        using typename base::size_type;
-        using typename base::difference_type;
-        using typename base::pointer;
-        using typename base::const_pointer;
-        using typename base::reverse_iterator;
-        using typename base::const_reverse_iterator;
-
-        class value_compare
-        :   public std::binary_function<value_type,value_type,bool>,
-            private key_compare
+        // Member types
+        using container_type = cont;
+        using value_compare = comp;
+        using typename cont::value_type;
+        using typename cont::size_type;
+        using typename cont::iterator;
+        using typename cont::const_iterator;
+        using typename cont::reference;
+        using typename cont::const_reference;
+        // Member functions
+        // Constructor
+        explicit sorted_vector(const Compare & cmp = Compare(), Container && c = Container())
+        :   cont(std::move(c)),
+            comp(cmp)
         {
-            friend class sorted_vector;
-
-        protected:
-            value_compare(key_compare pred)
-            :   key_compare(pred) { ; }
-
-        public:
-            bool operator()(const value_type& lhs,
-                                const value_type& rhs) const
-            { return key_compare::operator()(lhs.first,rhs.first); }
-        };
-
-        explicit sorted_vector(const key_compare& comp = key_compare(),
-                                const allocator_type& alloc = allocator_type())
-        : base(alloc),compare_func(comp) { ; }
-
-        template<typename InputIterator>
-        sorted_vector(InputIterator first,InputIterator last,
-                        const key_compare& comp = key_compare(),
-                        const allocator_type& alloc = allocator_type())
-        :   base(first,last,alloc),compare_func(comp)
-        {
-            compare_func& me = *this;
-            std::sort(this->begin(),this->end(),me);
+            this->sort();
         }
 
-        sorted_vector& operator=(const sorted_vector& rhs)
+        sorted_vector(const Compare & cmp, const Container & c)
+        :   cont(c),
+            comp(cmp)
         {
-            rhs.swap(*this);
+            this->sort();
+        }
+
+        sorted_vector(std::initializer_list<value_type> il)
+        :   cont(std::move(il)),
+            comp()
+        {
+            this->sort();
+        }
+
+        sorted_vector(std::initializer_list<value_type> il, const Compare & cmp)
+        :   cont(std::move(il)),
+            comp(cmp)
+        {
+            this->sort();
+        }
+
+        sorted_vector(std::initializer_list<value_type> il, Compare && cmp)
+        :   cont(il),
+            comp(std::move(cmp))
+        {
+            this->sort();
+        }
+
+        template<typename Iterator>
+        sorted_vector(Iterator first, Iterator last, const Compare & cmp, const Container & cnt)
+        :   cont(cnt),
+            comp(cmp)
+        {
+            this->insert(first,last);
+        }
+
+        template<typename Iterator>
+        sorted_vector(Iterator first, Iterator last, const Compare & cmp = Compare(), Container && cnt = Container())
+        :   cont(std::move(cnt)),
+            comp(std::move(cmp))
+        {
+            this->insert(first,last);
+        }
+        // Copy constructor
+        sorted_vector(const sorted_vector & other) = default;
+        // Move constructor
+        sorted_vector(sorted_vector && other) = default;
+        // Copy-assignment operator
+        sorted_vector & operator=(const sorted_vector & other) = default;
+        // Move-assignment operator
+        sorted_vector & operator=(sorted_vector && other) = default;
+        // Assignment from initializer list operator
+        sorted_vector & operator=(std::initializer_list<value_type> il)
+        {
+            sorted_vector other(il);
+            this->swap(other);
             return *this;
         }
+        // Destructor
+        ~sorted_vector() = default;
+        // Access
+        using cont::at;
+        using cont::front;
+        using cont::back;
+        using cont::begin;
+        using cont::cbegin;
+        using cont::rbegin;
+        using cont::crbegin;
+        using cont::end;
+        using cont::cend;
+        using cont::rend;
+        using cont::crend;
+        // Capacity
+        using cont::empty;
+        using cont::size;
+        using cont::max_size;
+        using cont::reserve;
+        using cont::capacity;
+        using cont::shrink_to_fit;
+        // Modifiers
+        using cont::clear;
 
-        // iterators:
-        using base::begin;
-        using base::end;
-        using base::rbegin;
-        using base::rend;
-
-        // capacity:
-        using base::empty;
-        using base::size;
-        using base::max_size;
-
-        mapped_type& operator[](const key_type& key)
-        { return insert(value_type(key,mapped_type())).first->second; }
-
-        // modifiers:
-        std::pair<iterator,bool> insert(const value_type& val)
+        void push(const value_type & v)
         {
-            bool found = true;
-            iterator i(this->lower_bound(val.first));
+            this->push_back(v);
+            this->sort_after_push();
+        }
 
-            if (i == this->end() || this->operator()(val.first,i->first))
+        void push(value_type && v)
+        {
+            this->push_back(std::move(v));
+            this->sort_after_push();
+        }
+
+        void push(auto first, auto last)
+        {
+            for (auto v : make_range(first, last))
             {
-                i = base::insert(i,val);
-                found = false;
+                this->push(v);
             }
-            return std::make_pair(i,found);
         }
 
-        iterator insert(iterator pos,const value_type& val)
+        template<typename... Args>
+        void emplace(Args && ...args)
         {
-            if((pos == this->begin() || this->operator()(*(pos - 1),val))
-               && (pos == this->end() || this->operator()(val, *pos)))
-            {
-                return base::insert(pos,val);
-            }
-            return insert(val).first;
+            this->emplace(std::forward<Args>(args)...);
+            this->sort();
         }
 
-        template<typename InputIterator>
-        void insert(InputIterator first,InputIterator last)
-        { for (auto v : make_range(first, last)) { this->insert(v); } }
-
-        void erase(iterator pos)
-        { base::erase(pos); }
-
-        size_type erase(const key_type& k)
+        iterator erase(const value_type & v)
         {
-            iterator i(this->find(k));
-            if (i == this->end())
-            {
-                return 0;
-            }
-            this->erase(i);
-            return 1;
+            auto r = equal_range(*this,v,this->comp);
+            return cont::erase(std::begin(r),std::end(r));
         }
 
-        void erase(iterator first,iterator last)
-        { base::erase(first,last); }
-
-        void swap(sorted_vector& other)
+        value_type pop()
         {
-            base::swap(other);
-            compare_func    &me = *this,
-                            &rhs = other;
-            std::swap(me,rhs);
+            auto v = this->top();
+            pop_heap(*this,this->comp);
+            cont::pop_back();
+            return v;
         }
 
-        void clear()
-        { base::clear(); }
+        using cont::resize;
 
-        // observers:
-        key_compare key_comp() const
-        { return *this; }
-
-        value_compare value_comp() const
+        void swap(sorted_vector & other)
         {
-            const key_compare& comp = *this;
-            return value_compare(comp);
-        }
-
-        // map operations:
-        iterator find(const key_type& k)
-        {
-            iterator i(this->lower_bound(k));
-            if (i != this->end() && this->operator()(k,i->first))
-            {
-                i = this->end();
-            }
-            return i;
-        }
-
-        const_iterator find(const key_type& k) const
-        {
-            const_iterator i(this->lower_bound(k));
-            if (i != this->end() && this->operator()(k,i->first))
-            {
-                return i;
-            }
-            return this->end();
-        }
-
-        size_type count(const key_type& k) const
-        { return std::find(k) != this->end(); }
-
-        iterator lower_bound(const key_type& k)
-        {
-            compare_func& me = *this;
-            return std::lower_bound(this->begin(),this->end(),k,me);
-        }
-
-        const_iterator lower_bound(const key_type& k) const
-        {
-            const compare_func& me = *this;
-            return std::lower_bound(this->begin(),this->end(),k,me);
-        }
-
-        iterator upper_bound(const key_type& k)
-        {
-            compare_func& me = *this;
-            return std::upper_bound(this->begin(),this->end(),k,me);
-        }
-
-        const_iterator upper_bound(const key_type& k) const
-        {
-            const compare_func& me = *this;
-            return std::upper_bound(this->begin(),this->end(),k,me);
-        }
-
-        std::pair<iterator,iterator> equal_range(const key_type& k)
-        {
-            compare_func& me = *this;
-            return std::equal_range(this->begin(),this->end(),k,me);
-        }
-
-        std::pair<const_iterator,const_iterator> equal_range(
-                                                    const key_type& k) const
-        {
-            const compare_func& me = *this;
-            return std::equal_range(this->begin(),this->end(),k,me);
-        }
-
-        template <class K1, class V1, class C1, class A1>
-        friend bool operator==(const sorted_vector<K1, V1, C1, A1>& lhs,
-                                const sorted_vector<K1, V1, C1, A1>& rhs)
-        {
-            const base  & a = lhs,
-                        & b = rhs;
-            return a == b;
-        }
-
-
-        template <class K1, class V1, class C1, class A1>
-        friend bool operator!=(const sorted_vector<K1, V1, C1, A1>& lhs,
-                                const sorted_vector<K1, V1, C1, A1>& rhs)
-        {
-            return !(lhs == rhs);
-        }
-
-        template <class K1, class V1, class C1, class A1>
-        friend bool operator<(const sorted_vector<K1, V1, C1, A1>& lhs,
-                                const sorted_vector<K1, V1, C1, A1>& rhs)
-        {
-            const base  & a = lhs,
-                        & b = rhs;
-            return a < b;
-        }
-
-        template <class K1, class V1, class C1, class A1>
-        friend bool operator<=(const sorted_vector<K1, V1, C1, A1>& lhs,
-                                const sorted_vector<K1, V1, C1, A1>& rhs)
-        {
-            return lhs < rhs || lhs == rhs;
-        }
-
-        template <class K1, class V1, class C1, class A1>
-        friend bool operator>(const sorted_vector<K1, V1, C1, A1>& lhs,
-                                const sorted_vector<K1, V1, C1, A1>& rhs)
-        {
-            return !(lhs <= rhs);
-        }
-
-        template <class K1, class V1, class C1, class A1>
-        friend bool operator>=(const sorted_vector<K1, V1, C1, A1>& lhs,
-                                const sorted_vector<K1, V1, C1, A1>& rhs)
-        {
-            return !(lhs < rhs);
+            cont::swap(other);
+            const comp  & mecomp = *this,
+                        & ocomp = other;
+            std::swap(mecomp,ocomp);
         }
     };
 
-    // specialized algorithms:
-    template<typename Key,typename Value,typename Comp,typename Alloc>
-    void swap(sorted_vector<Key,Value,Comp,Alloc>& lhs,
-              sorted_vector<Key,Value,Comp,Alloc>& rhs)
-    { lhs.swap(rhs); }
+    template<typename Container,typename Compare>
+    void swap(sorted_vector<Container,Compare> & lhs, sorted_vector<Container,Compare> & rhs)
+    {
+        lhs.swap(rhs);
+    }
 }
 
 #endif // ADS_SORTED_VECTOR_H

@@ -61,15 +61,16 @@ int main()
     {
         pairs[m] = make_pair(m + 1, ar[m]);
     }
-    sorted_vector<int,int> iavec;
-    iavec.insert(pairs.begin(),pairs.end());
+    using ordered_pairs = sorted_vector<pair<int,int>,vector<pair<int,int>>,less<pair<int,int>>>;
+    ordered_pairs opairs;
+    opairs.push(pairs.begin(),pairs.end());
     pair<int,int> ten(4,10);
-    if (find(iavec,ten).found == false)
+    if (find(opairs,ten).found == false)
     {
         cout << "Not found!: a" << endl;
     }
     auto fun2 = [&](const pair<int,int> & p){ return p < ten; };
-    if (find_if(iavec,fun2).found)
+    if (find_if(opairs,fun2).found)
     {
         cout << "Found!: b" << endl;
     }
@@ -93,7 +94,7 @@ int main()
     }
     copy(br.begin(),br.end(),ostream_iterator<double>(cout, " "));
     min_heap<int> h;
-    range<sorted_vector<int,int>::iterator> r(begin(iavec),end(iavec));
+    range<increase_sequence<pair<int,int>>::iterator> r(begin(opairs),end(opairs));
     range<array<int,5>::iterator> r2(begin(br),end(br));
     return 0;
 }
