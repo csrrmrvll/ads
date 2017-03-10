@@ -68,6 +68,8 @@ namespace ads
         using typename cont::size_type;
         using typename cont::iterator;
         using typename cont::const_iterator;
+        using typename cont::reverse_iterator;
+        using typename cont::const_reverse_iterator;
         using typename cont::reference;
         using typename cont::const_reference;
         // Member functions
