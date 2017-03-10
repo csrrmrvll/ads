@@ -62,7 +62,7 @@ int main()
     {
         pairs[m] = make_pair(m + 1, ar[m]);
     }
-    using ordered_pairs = sorted_vector<pair,vector<pair>,less<pair>>;
+    using ordered_pairs = sorted_vector<pair>;
     ordered_pairs opairs;
     opairs.push(make_range(pairs));
     pair ten(4,10);
