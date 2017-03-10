@@ -56,20 +56,21 @@ int main()
         << endl << make_range(ar)
         << endl << make_range(br) << endl;
     }
-    vector<pair<int,int>> pairs(5);
+    using pair = pair<int,int>;
+    vector<pair> pairs(5);
     for (auto m : make_numerical_range(0,4))
     {
         pairs[m] = make_pair(m + 1, ar[m]);
     }
-    using ordered_pairs = sorted_vector<pair<int,int>,vector<pair<int,int>>,less<pair<int,int>>>;
+    using ordered_pairs = sorted_vector<pair,vector<pair>,less<pair>>;
     ordered_pairs opairs;
     opairs.push(pairs.begin(),pairs.end());
-    pair<int,int> ten(4,10);
+    pair ten(4,10);
     if (find(opairs,ten).found == false)
     {
         cout << "Not found!: a" << endl;
     }
-    auto fun2 = [&](const pair<int,int> & p){ return p < ten; };
+    auto fun2 = [&](const pair & p){ return p < ten; };
     if (find_if(opairs,fun2).found)
     {
         cout << "Found!: b" << endl;
@@ -94,7 +95,7 @@ int main()
     }
     copy(br.begin(),br.end(),ostream_iterator<double>(cout, " "));
     min_heap<int> h;
-    range<increase_sequence<pair<int,int>>::iterator> r(begin(opairs),end(opairs));
+    range<increase_sequence<pair>::iterator> r(begin(opairs),end(opairs));
     range<array<int,5>::iterator> r2(begin(br),end(br));
     return 0;
 }

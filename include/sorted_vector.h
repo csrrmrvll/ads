@@ -27,22 +27,38 @@ namespace ads
     :   private Container,
         private Compare
     {
+        using cont = Container;
+        using comp = Compare;
+
+        constexpr cont & cnt()
+        {
+            return *this;
+        }
+
+        constexpr const cont & cnt() const
+        {
+            return *this;
+        }
+
+        constexpr comp & cmp()
+        {
+            return *this;
+        }
+
+        constexpr const comp & cmp() const
+        {
+            return *this;
+        }
+
         void sort()
         {
-            cont & cnt = *this;
-            comp & cmp = *this;
-            make_heap(cnt,cmp);
+            make_heap(cnt(),cmp());
         }
 
         void sort_after_push()
         {
-            cont & cnt = *this;
-            comp & cmp = *this;
-            push_heap(cnt,cmp);
+            push_heap(cnt(),cmp());
         }
-
-        using cont = Container;
-        using comp = Compare;
 
     public:
         // Member types
@@ -71,21 +87,21 @@ namespace ads
         }
 
         sorted_vector(std::initializer_list<value_type> il)
-        :   cont(std::move(il)),
+        :   cont{std::move(il)},
             comp()
         {
             this->sort();
         }
 
         sorted_vector(std::initializer_list<value_type> il, const Compare & cmp)
-        :   cont(std::move(il)),
+        :   cont{std::move(il)},
             comp(cmp)
         {
             this->sort();
         }
 
         sorted_vector(std::initializer_list<value_type> il, Compare && cmp)
-        :   cont(il),
+        :   cont{std::move(il)},
             comp(std::move(cmp))
         {
             this->sort();
@@ -174,7 +190,7 @@ namespace ads
 
         iterator erase(const value_type & v)
         {
-            auto r = equal_range(*this,v,this->comp);
+            auto r = equal_range(cnt(),v,comp());
             return cont::erase(std::begin(r),std::end(r));
         }
 
@@ -191,9 +207,50 @@ namespace ads
         void swap(sorted_vector & other)
         {
             cont::swap(other);
-            const comp  & mecomp = *this,
-                        & ocomp = other;
-            std::swap(mecomp,ocomp);
+            std::swap(cmp(),other.cmp());
+        }
+
+        template<typename Cont,typename Comp>
+        friend bool operator==(const sorted_vector<Cont,Comp> & lhs,
+                                const sorted_vector<Cont,Comp> & rhs)
+        {
+            return lhs.cnt() == rhs.cnt() && lhs.cmp() == rhs.cmp();
+        }
+
+
+        template <typename Cont,typename Comp>
+        friend bool operator!=(const sorted_vector<Cont,Comp> & lhs,
+                                const sorted_vector<Cont,Comp> & rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        template <typename Cont,typename Comp>
+        friend bool operator<(const sorted_vector<Cont,Comp> & lhs,
+                                const sorted_vector<Cont,Comp> & rhs)
+        {
+            return lhs.cnt() < rhs.cnt();
+        }
+
+        template <typename Cont,typename Comp>
+        friend bool operator<=(const sorted_vector<Cont,Comp> & lhs,
+                                const sorted_vector<Cont,Comp> & rhs)
+        {
+            return lhs < rhs || lhs == rhs;
+        }
+
+        template <typename Cont,typename Comp>
+        friend bool operator>(const sorted_vector<Cont,Comp> & lhs,
+                                const sorted_vector<Cont,Comp> & rhs)
+        {
+            return !(lhs <= rhs);
+        }
+
+        template <typename Cont,typename Comp>
+        friend bool operator>=(const sorted_vector<Cont,Comp> & lhs,
+                                const sorted_vector<Cont,Comp> & rhs)
+        {
+            return !(lhs < rhs);
         }
     };
 

@@ -58,11 +58,11 @@
 			<Add option="-Wall" />
 			<Add directory="." />
 		</Compiler>
-		<Unit filename="include/KeyValue.h" />
 		<Unit filename="include/ads.h" />
 		<Unit filename="include/algorithm.h" />
 		<Unit filename="include/associative_vector.h" />
 		<Unit filename="include/heap.h" />
+		<Unit filename="include/key_value.h" />
 		<Unit filename="include/numerical_range.h" />
 		<Unit filename="include/ostreamable.h" />
 		<Unit filename="include/range.h" />
