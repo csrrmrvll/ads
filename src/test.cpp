@@ -64,7 +64,7 @@ int main()
     }
     using ordered_pairs = sorted_vector<pair,vector<pair>,less<pair>>;
     ordered_pairs opairs;
-    opairs.push(pairs.begin(),pairs.end());
+    opairs.push(make_range(pairs));
     pair ten(4,10);
     if (find(opairs,ten).found == false)
     {

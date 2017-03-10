@@ -110,19 +110,19 @@ namespace ads
         }
 
         template<typename Iterator>
-        sorted_vector(Iterator first, Iterator last, const Compare & cmp, const Container & cnt)
+        sorted_vector(range<Iterator> && r, const Compare & cmp, const Container & cnt)
         :   cont(cnt),
             comp(cmp)
         {
-            this->insert(first,last);
+            this->push(r);
         }
 
         template<typename Iterator>
-        sorted_vector(Iterator first, Iterator last, const Compare & cmp = Compare(), Container && cnt = Container())
+        sorted_vector(range<Iterator> && r, const Compare & cmp = Compare(), Container && cnt = Container())
         :   cont(std::move(cnt)),
             comp(std::move(cmp))
         {
-            this->insert(first,last);
+            this->push(r);
         }
         // Copy constructor
         sorted_vector(const sorted_vector & other) = default;
@@ -175,9 +175,10 @@ namespace ads
             this->sort_after_push();
         }
 
-        void push(auto first, auto last)
+        template<typename Iterator>
+        void push(range<Iterator> && r)
         {
-            for (auto v : make_range(first, last))
+            for (auto v : r)
             {
                 this->push(v);
             }
