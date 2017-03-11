@@ -66,7 +66,7 @@
 		<Unit filename="include/numerical_range.h" />
 		<Unit filename="include/ostreamable.h" />
 		<Unit filename="include/range.h" />
-		<Unit filename="include/sorted_vector.h" />
+		<Unit filename="include/sorted_sequence.h" />
 		<Unit filename="src/test.cpp" />
 		<Extensions>
 			<code_completion />
