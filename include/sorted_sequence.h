@@ -15,10 +15,10 @@ namespace ads
     class sorted_sequence;
 
     template<typename T>
-    using increase_sequence = sorted_sequence<T,std::vector<T>>;
+    using increase_sequence = sorted_sequence<T,sequence<T>>;
 
     template<typename T>
-    using decrease_sequence = sorted_sequence<T,std::vector<T>,std::greater<T>>;
+    using decrease_sequence = sorted_sequence<T,sequence<T>,std::greater<T>>;
 
     template<typename T,typename Container,typename Compare>
     class sorted_sequence

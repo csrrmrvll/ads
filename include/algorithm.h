@@ -191,6 +191,18 @@ namespace ads
         return std::upper_bound(begin(c),end(c),v,p);
     }
 
+    template<typename Iterator>
+    void sort(range<Iterator> && r)
+    {
+        std::sort(begin(r),end(r));
+    }
+
+    template<typename Iterator,typename Compare>
+    void sort(range<Iterator> && r, Compare comp)
+    {
+        std::sort(begin(r),end(r),comp);
+    }
+
     template<typename T>
     bool swap_if(T & x, T & y, bool b)
     {

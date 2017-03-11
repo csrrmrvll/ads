@@ -16,30 +16,38 @@ namespace ads
         :   public Comp
         {
             using value = Value;
-            using compare_func = Comp;
+            using comp = Comp;
             using typename Comp::first_argument_type;
             using data = std::pair<first_argument_type,value>;
 
         public:
-            associative_sequence_compare() { ; }
+            associative_sequence_compare() = default;
 
-            associative_sequence_compare(const compare_func& src)
-            :   compare_func(src) { ; }
+            associative_sequence_compare(const comp & src)
+            :   comp(src) { ; }
 
-            bool operator()(const first_argument_type& lhs,
-                                const first_argument_type& rhs) const
-            { return compare_func::operator()(lhs,rhs); }
+            bool operator()(const first_argument_type & lhs,
+                            const first_argument_type & rhs) const
+            {
+                return comp::operator()(lhs,rhs);
+            }
 
-            bool operator()(const data& lhs,const data& rhs) const
-            { return operator()(lhs.first,rhs.first); }
+            bool operator()(const data & lhs,const data & rhs) const
+            {
+                return this(lhs.first,rhs.first);
+            }
 
-            bool operator()(const data& lhs,
-                                const first_argument_type& rhs) const
-            { return operator()(lhs.first,rhs); }
+            bool operator()(const data & lhs,
+                            const first_argument_type & rhs) const
+            {
+                return this(lhs.first,rhs);
+            }
 
-            bool operator()(const first_argument_type& lhs,
-                                const data& rhs) const
-            { return operator()(lhs,rhs.first); }
+            bool operator()(const first_argument_type & lhs,
+                            const data& rhs) const
+            {
+                return this(lhs,rhs.first);
+            }
         };
     }
 
@@ -54,25 +62,36 @@ namespace ads
     :   private std::vector<std::pair<Key,Value>,Alloc>,
         private Private::associative_sequence_compare<Value,Comp>
     {
-        using base = std::vector<std::pair<Key,Value>,Alloc>;
-        using compare_func = Private::associative_sequence_compare<Value,Comp>;
+        using cont = std::vector<std::pair<Key,Value>,Alloc>;
+        using cont::cnt;
+        using comp = Private::associative_sequence_compare<Value,Comp>;
+
+        constexpr comp & cmp()
+        {
+            return *this;
+        }
+
+        constexpr const comp & cmp() const
+        {
+            return *this;
+        }
 
     public:
         using key_compare = Comp;
         using key_type = Key;
         using mapped_type = Value;
-        using typename base::value_type;
-        using typename base::allocator_type;
-        using typename base::reference;
-        using typename base::const_reference;
-        using typename base::iterator;
-        using typename base::const_iterator;
-        using typename base::size_type;
-        using typename base::difference_type;
-        using typename base::pointer;
-        using typename base::const_pointer;
-        using typename base::reverse_iterator;
-        using typename base::const_reverse_iterator;
+        using typename cont::value_type;
+        using typename cont::allocator_type;
+        using typename cont::reference;
+        using typename cont::const_reference;
+        using typename cont::iterator;
+        using typename cont::const_iterator;
+        using typename cont::size_type;
+        using typename cont::difference_type;
+        using typename cont::pointer;
+        using typename cont::const_pointer;
+        using typename cont::reverse_iterator;
+        using typename cont::const_reverse_iterator;
 
         class value_compare
         :   public std::binary_function<value_type,value_type,bool>,
@@ -85,77 +104,90 @@ namespace ads
             :   key_compare(pred) { ; }
 
         public:
-            bool operator()(const value_type& lhs,
-                                const value_type& rhs) const
-            { return key_compare::operator()(lhs.first,rhs.first); }
+            bool operator()(const value_type & lhs,
+                            const value_type & rhs) const
+            {
+                return key_compare::operator()(lhs.first,rhs.first);
+            }
         };
 
-        explicit associative_sequence(const key_compare& comp = key_compare(),
-                                const allocator_type& alloc = allocator_type())
-        :   base(alloc),compare_func(comp) { ; }
+        explicit associative_sequence(const key_compare & cmp = key_compare(),
+                                const allocator_type & alloc = allocator_type())
+        :   cont(alloc),
+            comp(cmp)
+        {
+        }
 
         template<typename InputIterator>
         associative_sequence(InputIterator first,InputIterator last,
-                        const key_compare& comp = key_compare(),
-                        const allocator_type& alloc = allocator_type())
-        :   base(first,last,alloc),compare_func(comp)
+                        const key_compare & cmp = key_compare(),
+                        const allocator_type & alloc = allocator_type())
+        :   cont(first,last,alloc),
+            comp(cmp)
         {
-            compare_func& me = *this;
-            std::sort(this->begin(),this->end(),me);
+            sort(cnt(),cmp());
         }
 
-        associative_sequence& operator=(const associative_sequence& rhs)
+        associative_sequence & operator=(const associative_sequence& rhs)
         {
             rhs.swap(*this);
             return *this;
         }
 
         // iterators:
-        using base::begin;
-        using base::end;
-        using base::rbegin;
-        using base::rend;
+        using cont::begin;
+        using cont::end;
+        using cont::rbegin;
+        using cont::rend;
 
         // capacity:
-        using base::empty;
-        using base::size;
-        using base::max_size;
+        using cont::empty;
+        using cont::size;
+        using cont::max_size;
 
-        mapped_type& operator[](const key_type& key)
-        { return insert(value_type(key,mapped_type())).first->second; }
+        mapped_type & operator[](const key_type & key)
+        {
+            return insert(value_type(key,mapped_type())).first->second;
+        }
 
         // modifiers:
-        std::pair<iterator,bool> insert(const value_type& val)
+        std::pair<iterator,bool> insert(const value_type & val)
         {
             bool found = true;
             iterator i(this->lower_bound(val.first));
-
             if (i == this->end() || this->operator()(val.first,i->first))
             {
-                i = base::insert(i,val);
+                i = cont::insert(i,val);
                 found = false;
             }
-            return std::make_pair(i,found);
+            return {i,found};
         }
 
-        iterator insert(iterator pos,const value_type& val)
+        iterator insert(iterator pos,const value_type & val)
         {
             if((pos == this->begin() || this->operator()(*(pos - 1),val))
                && (pos == this->end() || this->operator()(val, *pos)))
             {
-                return base::insert(pos,val);
+                return cont::insert(pos,val);
             }
             return insert(val).first;
         }
 
-        template<typename InputIterator>
-        void insert(InputIterator first,InputIterator last)
-        { for (auto v : make_range(first, last)) { this->insert(v); } }
+        template<typename Iterator>
+        void insert(range<Iterator> && r)
+        {
+            for (auto v : r)
+            {
+                this->insert(v);
+            }
+        }
 
         void erase(iterator pos)
-        { base::erase(pos); }
+        {
+            cont::erase(pos);
+        }
 
-        size_type erase(const key_type& k)
+        size_type erase(const key_type & k)
         {
             iterator i(this->find(k));
             if (i == this->end())
@@ -166,98 +198,92 @@ namespace ads
             return 1;
         }
 
-        void erase(iterator first,iterator last)
-        { base::erase(first,last); }
-
-        void swap(associative_sequence& other)
+        void erase(range<iterator> && r)
         {
-            base::swap(other);
-            compare_func    &me = *this,
-                            &rhs = other;
-            std::swap(me,rhs);
+            cont::erase(std::begin(r),std::end(r));
         }
 
-        void clear()
-        { base::clear(); }
+        void swap(associative_sequence & other)
+        {
+            cont::swap(other);
+            std::swap(cmp(),other.cmp());
+        }
+
+        using cont::clear;
 
         // observers:
         key_compare key_comp() const
-        { return *this; }
+        {
+            return *this;
+        }
 
         value_compare value_comp() const
         {
-            const key_compare& comp = *this;
-            return value_compare(comp);
+            return value_compare(key_comp());
         }
 
         // map operations:
-        iterator find(const key_type& k)
+        iterator find(const key_type & k)
         {
             iterator i(this->lower_bound(k));
-            if (i != this->end() && this->operator()(k,i->first))
-            {
-                i = this->end();
-            }
-            return i;
-        }
-
-        const_iterator find(const key_type& k) const
-        {
-            const_iterator i(this->lower_bound(k));
-            if (i != this->end() && this->operator()(k,i->first))
+            if (i != this->end() && !this->operator()(k,i->first))
             {
                 return i;
             }
             return this->end();
         }
 
-        size_type count(const key_type& k) const
-        { return std::find(k) != this->end(); }
-
-        iterator lower_bound(const key_type& k)
+        const_iterator find(const key_type & k) const
         {
-            compare_func& me = *this;
-            return std::lower_bound(this->begin(),this->end(),k,me);
+            const_iterator i(this->lower_bound(k));
+            if (i != this->end() && !this->operator()(k,i->first))
+            {
+                return i;
+            }
+            return this->end();
         }
 
-        const_iterator lower_bound(const key_type& k) const
+        size_type count(const key_type & k) const
         {
-            const compare_func& me = *this;
-            return std::lower_bound(this->begin(),this->end(),k,me);
+            return this->find(k) != this->end();
         }
 
-        iterator upper_bound(const key_type& k)
+        iterator lower_bound(const key_type & k)
         {
-            compare_func& me = *this;
-            return std::upper_bound(this->begin(),this->end(),k,me);
+            return lower_bound(cnt(),k,cmp());
         }
 
-        const_iterator upper_bound(const key_type& k) const
+        const_iterator lower_bound(const key_type & k) const
         {
-            const compare_func& me = *this;
-            return std::upper_bound(this->begin(),this->end(),k,me);
+            return lower_bound(cnt(),k,cmp());
         }
 
-        std::pair<iterator,iterator> equal_range(const key_type& k)
+        iterator upper_bound(const key_type & k)
         {
-            compare_func& me = *this;
-            return std::equal_range(this->begin(),this->end(),k,me);
+            return upper_bound(cnt(),k,cmp());
         }
 
-        std::pair<const_iterator,const_iterator> equal_range(
-                                                    const key_type& k) const
+        const_iterator upper_bound(const key_type & k) const
         {
-            const compare_func& me = *this;
-            return std::equal_range(this->begin(),this->end(),k,me);
+            return upper_bound(cnt(),k,cmp());
+        }
+
+        std::pair<iterator,iterator> equal_range(const key_type & k)
+        {
+            return equal_range(cnt(),k,cmp());
+        }
+
+        std::pair<const_iterator,const_iterator>
+        equal_range(const key_type & k) const
+        {
+            return equal_range(cnt(),k,cmp());
         }
 
         template <class K1, class V1, class C1, class A1>
         friend bool operator==(const associative_sequence<K1, V1, C1, A1>& lhs,
                                 const associative_sequence<K1, V1, C1, A1>& rhs)
         {
-            const base  & a = lhs,
-                        & b = rhs;
-            return a == b;
+            return lhs.cnt() == rhs.cnt();
         }
 
 
@@ -272,9 +298,7 @@ namespace ads
         friend bool operator<(const associative_sequence<K1, V1, C1, A1>& lhs,
                                 const associative_sequence<K1, V1, C1, A1>& rhs)
         {
-            const base  & a = lhs,
-                        & b = rhs;
-            return a < b;
+            return lhs.cnt() < rhs.cnt();
         }
 
         template <class K1, class V1, class C1, class A1>
@@ -303,7 +327,9 @@ namespace ads
     template<typename Key,typename Value,typename Comp,typename Alloc>
     void swap(associative_sequence<Key,Value,Comp,Alloc>& lhs,
               associative_sequence<Key,Value,Comp,Alloc>& rhs)
-    { lhs.swap(rhs); }
+    {
+        lhs.swap(rhs);
+    }
 }
 
 #endif // ADS_ASSOCIATIVE_SEQUENCE_H

@@ -13,6 +13,7 @@ namespace ads
     class sequence
     :   private Container
     {
+    protected:
         using cont = Container;
 
         constexpr cont & cnt()
@@ -68,6 +69,7 @@ namespace ads
         using cont::empty;
         using cont::size;
         using cont::max_size;
+        using cont::reserve;
         using cont::capacity;
         using cont::shrink_to_fit;
         // Modifiers
@@ -94,16 +96,70 @@ namespace ads
         using cont::resize;
         using cont::swap;
 
-        using cont::operator==;
-        using cont::operator!=;
-        using cont::operator<;
-        using cont::operator<=;
-        using cont::operator>;
-        using cont::operator>=;
+        template<typename U,typename Cont>
+        friend bool operator==(const associative_sequence<U,Cont> & lhs,
+                                const associative_sequence<U,Cont> & rhs);
+        template<typename U,typename Cont>
+        friend bool operator!=(const associative_sequence<U,Cont> & lhs,
+                                const associative_sequence<U,Cont> & rhs);
+        template<typename U,typename Cont>
+        friend bool operator<(const associative_sequence<U,Cont> & lhs,
+                                const associative_sequence<U,Cont> & rhs);
+        template<typename U,typename Cont>
+        friend bool operator<=(const associative_sequence<U,Cont> & lhs,
+                                const associative_sequence<U,Cont> & rhs);
+        template<typename U,typename Cont>
+        friend bool operator>(const associative_sequence<U,Cont> & lhs,
+                                const associative_sequence<U,Cont> & rhs);
+        template<typename U,typename Cont>
+        friend bool operator>=(const associative_sequence<U,Cont> & lhs,
+                                const associative_sequence<U,Cont> & rhs);
     };
 
-    template<typename Container,typename Compare>
-    void swap(sequence<Container,Compare> & lhs, sequence<Container,Compare> & rhs)
+    template<typename T,typename Container>
+    bool operator==(const associative_sequence<T,Container> & lhs,
+                    const associative_sequence<T,Container> & rhs)
+    {
+        return lhs.cnt() == rhs.cnt();
+    }
+
+    template<typename T,typename Container>
+    bool operator!=(const associative_sequence<T,Container> & lhs,
+                    const associative_sequence<T,Container> & rhs)
+    {
+        return !(lhs == rhs);
+    }
+
+    template<typename T,typename Container>
+    bool operator<(const associative_sequence<T,Container> & lhs,
+                    const associative_sequence<T,Container> & rhs)
+    {
+        return lhs.cnt() < rhs.cnt();
+    }
+
+    template<typename T,typename Container>
+    bool operator<=(const associative_sequence<T,Container> & lhs,
+                    const associative_sequence<T,Container> & rhs)
+    {
+        return lhs < rhs || lhs == rhs;
+    }
+
+    template<typename T,typename Container>
+    bool operator>(const associative_sequence<T,Container> & lhs,
+                    const associative_sequence<T,Container> & rhs)
+    {
+        return !(lhs <= rhs);
+    }
+
+    template<typename T,typename Container>
+    bool operator>=(const associative_sequence<T,Container> & lhs,
+                    const associative_sequence<T,Container> & rhs)
+    {
+        return !(lhs < rhs);
+    }
+
+    template<typename T,typename Container>
+    void swap(sequence<T,Container> & lhs, sequence<T,Container> & rhs)
     {
         lhs.swap(rhs);
     }
