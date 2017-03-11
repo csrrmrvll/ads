@@ -52,7 +52,7 @@ int main()
     }
     if (copy_if(begin(ar),ar.end(),br.begin(),fun) == br.end())
     {
-        cout << "Copied a in b:" << endl
+        cout << "Copied a in b:"
         << endl << make_range(ar)
         << endl << make_range(br) << endl;
     }
@@ -62,7 +62,7 @@ int main()
     {
         pairs[m] = make_pair(m + 1, ar[m]);
     }
-    using ordered_pairs = sorted_vector<pair>;
+    using ordered_pairs = increase_sequence<pair>;
     ordered_pairs opairs;
     opairs.push(make_range(pairs));
     pair ten(4,10);
@@ -84,7 +84,7 @@ int main()
     {
         cout << "Found!: b" << endl;
     }
-    set<int> iset(ar.begin(),ar.end());
+    set<int> iset(begin(br),end(br));
     if (find(iset,10).found == false)
     {
         cout << "Not found!: a" << endl;
@@ -93,9 +93,9 @@ int main()
     {
         cout << "Found!: b" << endl;
     }
-    copy(br.begin(),br.end(),ostream_iterator<double>(cout, " "));
+    copy(br,ostream_iterator<double>(cout, " "));
     min_heap<int> h;
-    range<increase_sequence<pair>::iterator> r(begin(opairs),end(opairs));
+    range<ordered_pairs::iterator> r(begin(opairs),end(opairs));
     range<array<int,5>::iterator> r2(begin(br),end(br));
     return 0;
 }

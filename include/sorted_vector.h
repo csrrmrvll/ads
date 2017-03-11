@@ -17,7 +17,7 @@ namespace ads
     class sorted_vector;
 
     template<typename T>
-    using increase_sequence = sorted_vector<T>;
+    using increase_sequence = sorted_vector<T,std::vector<T>>;
 
     template<typename T>
     using decrease_sequence = sorted_vector<T,std::vector<T>,std::greater<T>>;
