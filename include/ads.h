@@ -7,6 +7,7 @@
 #include "key_value.h"
 #include "ostreamable.h"
 #include "range.h"
+#include "sequence.h"
 #include "numerical_range.h"
 #include "sorted_sequence.h"
 

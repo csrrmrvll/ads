@@ -1,17 +1,15 @@
 #ifndef ADS_SORTED_SEQUENCE_H
 #define ADS_SORTED_SEQUENCE_H
 
-#include <utility>
-#include <vector>
 #include "algorithm.h"
-#include "range.h"
+#include "sequence.h"
 
 namespace ads
 {
     template
     <
         typename T,
-        typename Container = std::vector<T>,
+        typename Container = sequence<T>,
         typename Compare = std::less<T>
     >
     class sorted_sequence;
@@ -53,11 +51,6 @@ namespace ads
         void sort()
         {
             make_heap(cnt(),cmp());
-        }
-
-        void sort_after_push()
-        {
-            push_heap(cnt(),cmp());
         }
 
     public:
@@ -166,13 +159,13 @@ namespace ads
         void push(const value_type & v)
         {
             this->push_back(v);
-            this->sort_after_push();
+            push_heap(cnt(),cmp());
         }
 
         void push(value_type && v)
         {
             this->push_back(std::move(v));
-            this->sort_after_push();
+            push_heap(cnt(),cmp());
         }
 
         template<typename Iterator>
@@ -200,12 +193,10 @@ namespace ads
         value_type pop()
         {
             auto v = this->top();
-            pop_heap(*this,this->comp);
+            pop_heap(cnt(),cmp());
             cont::pop_back();
             return v;
         }
-
-        using cont::resize;
 
         void swap(sorted_sequence & other)
         {

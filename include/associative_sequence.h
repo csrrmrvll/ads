@@ -48,7 +48,7 @@ namespace ads
         typename Key,
         typename Value,
         typename Comp  = std::less<Key>,
-        typename Alloc = std::allocator<std::pair<Key,Value> >
+        typename Alloc = std::allocator<std::pair<Key,Value>>
     >
     class associative_sequence
     :   private std::vector<std::pair<Key,Value>,Alloc>,
@@ -92,7 +92,7 @@ namespace ads
 
         explicit associative_sequence(const key_compare& comp = key_compare(),
                                 const allocator_type& alloc = allocator_type())
-        : base(alloc),compare_func(comp) { ; }
+        :   base(alloc),compare_func(comp) { ; }
 
         template<typename InputIterator>
         associative_sequence(InputIterator first,InputIterator last,
