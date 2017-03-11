@@ -8,6 +8,6 @@
 #include "ostreamable.h"
 #include "range.h"
 #include "numerical_range.h"
-#include "sorted_vector.h"
+#include "sorted_sequence.h"
 
 #endif // ADS_H
