@@ -60,7 +60,7 @@ int main()
     vector<pair> pairs(5);
     for (auto m : make_numerical_range(0,4))
     {
-        pairs[m] = make_pair(m + 1, ar[m]);
+        pairs[m] = {m + 1, ar[m]};
     }
     using ordered_pairs = increase_sequence<pair>;
     ordered_pairs opairs;
