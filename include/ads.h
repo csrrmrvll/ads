@@ -2,6 +2,7 @@
 #define ADS_H
 
 #include "algorithm.h"
+#include "associative_sequence.h"
 #include "heap.h"
 #include "key_value.h"
 #include "ostreamable.h"

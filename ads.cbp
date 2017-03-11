@@ -60,7 +60,7 @@
 		</Compiler>
 		<Unit filename="include/ads.h" />
 		<Unit filename="include/algorithm.h" />
-		<Unit filename="include/associative_vector.h" />
+		<Unit filename="include/associative_sequence.h" />
 		<Unit filename="include/heap.h" />
 		<Unit filename="include/key_value.h" />
 		<Unit filename="include/numerical_range.h" />

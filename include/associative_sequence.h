@@ -1,5 +1,5 @@
-#ifndef ADS_ASSOCIATIVE_VECTOR_H
-#define ADS_ASSOCIATIVE_VECTOR_H
+#ifndef ADS_ASSOCIATIVE_SEQUENCE_H
+#define ADS_ASSOCIATIVE_SEQUENCE_H
 
 #include <functional>
 #include <vector>
@@ -12,7 +12,7 @@ namespace ads
     namespace Private
     {
         template<typename Value,typename Comp>
-        class associative_vector_compare
+        class associative_sequence_compare
         :   public Comp
         {
             using value = Value;
@@ -21,9 +21,9 @@ namespace ads
             using data = std::pair<first_argument_type,value>;
 
         public:
-            associative_vector_compare() { ; }
+            associative_sequence_compare() { ; }
 
-            associative_vector_compare(const compare_func& src)
+            associative_sequence_compare(const compare_func& src)
             :   compare_func(src) { ; }
 
             bool operator()(const first_argument_type& lhs,
@@ -50,12 +50,12 @@ namespace ads
         typename Comp  = std::less<Key>,
         typename Alloc = std::allocator<std::pair<Key,Value> >
     >
-    class sorted_vector
+    class associative_sequence
     :   private std::vector<std::pair<Key,Value>,Alloc>,
-        private Private::associative_vector_compare<Value,Comp>
+        private Private::associative_sequence_compare<Value,Comp>
     {
         using base = std::vector<std::pair<Key,Value>,Alloc>;
-        using compare_func = Private::associative_vector_compare<Value,Comp>;
+        using compare_func = Private::associative_sequence_compare<Value,Comp>;
 
     public:
         using key_compare = Comp;
@@ -78,7 +78,7 @@ namespace ads
         :   public std::binary_function<value_type,value_type,bool>,
             private key_compare
         {
-            friend class sorted_vector;
+            friend class associative_sequence;
 
         protected:
             value_compare(key_compare pred)
@@ -90,12 +90,12 @@ namespace ads
             { return key_compare::operator()(lhs.first,rhs.first); }
         };
 
-        explicit sorted_vector(const key_compare& comp = key_compare(),
+        explicit associative_sequence(const key_compare& comp = key_compare(),
                                 const allocator_type& alloc = allocator_type())
         : base(alloc),compare_func(comp) { ; }
 
         template<typename InputIterator>
-        sorted_vector(InputIterator first,InputIterator last,
+        associative_sequence(InputIterator first,InputIterator last,
                         const key_compare& comp = key_compare(),
                         const allocator_type& alloc = allocator_type())
         :   base(first,last,alloc),compare_func(comp)
@@ -104,7 +104,7 @@ namespace ads
             std::sort(this->begin(),this->end(),me);
         }
 
-        sorted_vector& operator=(const sorted_vector& rhs)
+        associative_sequence& operator=(const associative_sequence& rhs)
         {
             rhs.swap(*this);
             return *this;
@@ -169,7 +169,7 @@ namespace ads
         void erase(iterator first,iterator last)
         { base::erase(first,last); }
 
-        void swap(sorted_vector& other)
+        void swap(associative_sequence& other)
         {
             base::swap(other);
             compare_func    &me = *this,
@@ -252,8 +252,8 @@ namespace ads
         }
 
         template <class K1, class V1, class C1, class A1>
-        friend bool operator==(const sorted_vector<K1, V1, C1, A1>& lhs,
-                                const sorted_vector<K1, V1, C1, A1>& rhs)
+        friend bool operator==(const associative_sequence<K1, V1, C1, A1>& lhs,
+                                const associative_sequence<K1, V1, C1, A1>& rhs)
         {
             const base  & a = lhs,
                         & b = rhs;
@@ -262,15 +262,15 @@ namespace ads
 
 
         template <class K1, class V1, class C1, class A1>
-        friend bool operator!=(const sorted_vector<K1, V1, C1, A1>& lhs,
-                                const sorted_vector<K1, V1, C1, A1>& rhs)
+        friend bool operator!=(const associative_sequence<K1, V1, C1, A1>& lhs,
+                                const associative_sequence<K1, V1, C1, A1>& rhs)
         {
             return !(lhs == rhs);
         }
 
         template <class K1, class V1, class C1, class A1>
-        friend bool operator<(const sorted_vector<K1, V1, C1, A1>& lhs,
-                                const sorted_vector<K1, V1, C1, A1>& rhs)
+        friend bool operator<(const associative_sequence<K1, V1, C1, A1>& lhs,
+                                const associative_sequence<K1, V1, C1, A1>& rhs)
         {
             const base  & a = lhs,
                         & b = rhs;
@@ -278,22 +278,22 @@ namespace ads
         }
 
         template <class K1, class V1, class C1, class A1>
-        friend bool operator<=(const sorted_vector<K1, V1, C1, A1>& lhs,
-                                const sorted_vector<K1, V1, C1, A1>& rhs)
+        friend bool operator<=(const associative_sequence<K1, V1, C1, A1>& lhs,
+                                const associative_sequence<K1, V1, C1, A1>& rhs)
         {
             return lhs < rhs || lhs == rhs;
         }
 
         template <class K1, class V1, class C1, class A1>
-        friend bool operator>(const sorted_vector<K1, V1, C1, A1>& lhs,
-                                const sorted_vector<K1, V1, C1, A1>& rhs)
+        friend bool operator>(const associative_sequence<K1, V1, C1, A1>& lhs,
+                                const associative_sequence<K1, V1, C1, A1>& rhs)
         {
             return !(lhs <= rhs);
         }
 
         template <class K1, class V1, class C1, class A1>
-        friend bool operator>=(const sorted_vector<K1, V1, C1, A1>& lhs,
-                                const sorted_vector<K1, V1, C1, A1>& rhs)
+        friend bool operator>=(const associative_sequence<K1, V1, C1, A1>& lhs,
+                                const associative_sequence<K1, V1, C1, A1>& rhs)
         {
             return !(lhs < rhs);
         }
@@ -301,9 +301,9 @@ namespace ads
 
     // specialized algorithms:
     template<typename Key,typename Value,typename Comp,typename Alloc>
-    void swap(sorted_vector<Key,Value,Comp,Alloc>& lhs,
-              sorted_vector<Key,Value,Comp,Alloc>& rhs)
+    void swap(associative_sequence<Key,Value,Comp,Alloc>& lhs,
+              associative_sequence<Key,Value,Comp,Alloc>& rhs)
     { lhs.swap(rhs); }
 }
 
-#endif // ADS_ASSOCIATIVE_VECTOR_H
+#endif // ADS_ASSOCIATIVE_SEQUENCE_H
