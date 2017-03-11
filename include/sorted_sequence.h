@@ -1,5 +1,5 @@
-#ifndef ADS_SORTED_VECTOR_H
-#define ADS_SORTED_VECTOR_H
+#ifndef ADS_SORTED_SEQUENCE_H
+#define ADS_SORTED_SEQUENCE_H
 
 #include <utility>
 #include <vector>
@@ -14,16 +14,16 @@ namespace ads
         typename Container = std::vector<T>,
         typename Compare = std::less<T>
     >
-    class sorted_vector;
+    class sorted_sequence;
 
     template<typename T>
-    using increase_sequence = sorted_vector<T,std::vector<T>>;
+    using increase_sequence = sorted_sequence<T,std::vector<T>>;
 
     template<typename T>
-    using decrease_sequence = sorted_vector<T,std::vector<T>,std::greater<T>>;
+    using decrease_sequence = sorted_sequence<T,std::vector<T>,std::greater<T>>;
 
     template<typename T,typename Container,typename Compare>
-    class sorted_vector
+    class sorted_sequence
     :   private Container,
         private Compare
     {
@@ -74,35 +74,35 @@ namespace ads
         using typename cont::const_reference;
         // Member functions
         // Constructor
-        explicit sorted_vector(const Compare & cmp = Compare(), Container && c = Container())
+        explicit sorted_sequence(const Compare & cmp = Compare(), Container && c = Container())
         :   cont(std::move(c)),
             comp(cmp)
         {
             this->sort();
         }
 
-        sorted_vector(const Compare & cmp, const Container & c)
+        sorted_sequence(const Compare & cmp, const Container & c)
         :   cont(c),
             comp(cmp)
         {
             this->sort();
         }
 
-        sorted_vector(std::initializer_list<value_type> il)
+        sorted_sequence(std::initializer_list<value_type> il)
         :   cont{std::move(il)},
             comp()
         {
             this->sort();
         }
 
-        sorted_vector(std::initializer_list<value_type> il, const Compare & cmp)
+        sorted_sequence(std::initializer_list<value_type> il, const Compare & cmp)
         :   cont{std::move(il)},
             comp(cmp)
         {
             this->sort();
         }
 
-        sorted_vector(std::initializer_list<value_type> il, Compare && cmp)
+        sorted_sequence(std::initializer_list<value_type> il, Compare && cmp)
         :   cont{std::move(il)},
             comp(std::move(cmp))
         {
@@ -110,7 +110,7 @@ namespace ads
         }
 
         template<typename Iterator>
-        sorted_vector(range<Iterator> && r, const Compare & cmp, const Container & cnt)
+        sorted_sequence(range<Iterator> && r, const Compare & cmp, const Container & cnt)
         :   cont(cnt),
             comp(cmp)
         {
@@ -118,29 +118,29 @@ namespace ads
         }
 
         template<typename Iterator>
-        sorted_vector(range<Iterator> && r, const Compare & cmp = Compare(), Container && cnt = Container())
+        sorted_sequence(range<Iterator> && r, const Compare & cmp = Compare(), Container && cnt = Container())
         :   cont(std::move(cnt)),
             comp(std::move(cmp))
         {
             this->push(r);
         }
         // Copy constructor
-        sorted_vector(const sorted_vector & other) = default;
+        sorted_sequence(const sorted_sequence & other) = default;
         // Move constructor
-        sorted_vector(sorted_vector && other) = default;
+        sorted_sequence(sorted_sequence && other) = default;
         // Copy-assignment operator
-        sorted_vector & operator=(const sorted_vector & other) = default;
+        sorted_sequence & operator=(const sorted_sequence & other) = default;
         // Move-assignment operator
-        sorted_vector & operator=(sorted_vector && other) = default;
+        sorted_sequence & operator=(sorted_sequence && other) = default;
         // Assignment from initializer list operator
-        sorted_vector & operator=(std::initializer_list<value_type> il)
+        sorted_sequence & operator=(std::initializer_list<value_type> il)
         {
-            sorted_vector other(il);
+            sorted_sequence other(il);
             this->swap(other);
             return *this;
         }
         // Destructor
-        ~sorted_vector() = default;
+        ~sorted_sequence() = default;
         // Access
         using cont::at;
         using cont::front;
@@ -207,61 +207,61 @@ namespace ads
 
         using cont::resize;
 
-        void swap(sorted_vector & other)
+        void swap(sorted_sequence & other)
         {
             cont::swap(other);
             std::swap(cmp(),other.cmp());
         }
 
         template<typename Cont,typename Comp>
-        friend bool operator==(const sorted_vector<Cont,Comp> & lhs,
-                                const sorted_vector<Cont,Comp> & rhs)
+        friend bool operator==(const sorted_sequence<Cont,Comp> & lhs,
+                                const sorted_sequence<Cont,Comp> & rhs)
         {
             return lhs.cnt() == rhs.cnt() && lhs.cmp() == rhs.cmp();
         }
 
 
         template <typename Cont,typename Comp>
-        friend bool operator!=(const sorted_vector<Cont,Comp> & lhs,
-                                const sorted_vector<Cont,Comp> & rhs)
+        friend bool operator!=(const sorted_sequence<Cont,Comp> & lhs,
+                                const sorted_sequence<Cont,Comp> & rhs)
         {
             return !(lhs == rhs);
         }
 
         template <typename Cont,typename Comp>
-        friend bool operator<(const sorted_vector<Cont,Comp> & lhs,
-                                const sorted_vector<Cont,Comp> & rhs)
+        friend bool operator<(const sorted_sequence<Cont,Comp> & lhs,
+                                const sorted_sequence<Cont,Comp> & rhs)
         {
             return lhs.cnt() < rhs.cnt();
         }
 
         template <typename Cont,typename Comp>
-        friend bool operator<=(const sorted_vector<Cont,Comp> & lhs,
-                                const sorted_vector<Cont,Comp> & rhs)
+        friend bool operator<=(const sorted_sequence<Cont,Comp> & lhs,
+                                const sorted_sequence<Cont,Comp> & rhs)
         {
             return lhs < rhs || lhs == rhs;
         }
 
         template <typename Cont,typename Comp>
-        friend bool operator>(const sorted_vector<Cont,Comp> & lhs,
-                                const sorted_vector<Cont,Comp> & rhs)
+        friend bool operator>(const sorted_sequence<Cont,Comp> & lhs,
+                                const sorted_sequence<Cont,Comp> & rhs)
         {
             return !(lhs <= rhs);
         }
 
         template <typename Cont,typename Comp>
-        friend bool operator>=(const sorted_vector<Cont,Comp> & lhs,
-                                const sorted_vector<Cont,Comp> & rhs)
+        friend bool operator>=(const sorted_sequence<Cont,Comp> & lhs,
+                                const sorted_sequence<Cont,Comp> & rhs)
         {
             return !(lhs < rhs);
         }
     };
 
     template<typename Container,typename Compare>
-    void swap(sorted_vector<Container,Compare> & lhs, sorted_vector<Container,Compare> & rhs)
+    void swap(sorted_sequence<Container,Compare> & lhs, sorted_sequence<Container,Compare> & rhs)
     {
         lhs.swap(rhs);
     }
 }
 
-#endif // ADS_SORTED_VECTOR_H
+#endif // ADS_SORTED_SEQUENCE_H
