@@ -9,18 +9,18 @@ namespace ads
     template
     <
         typename T,
-        typename Container = sequence<T>,
-        typename Compare = std::less<T>
+        typename Compare = std::less<T>,
+        typename Container = sequence<T>
     >
     class sorted_sequence;
 
     template<typename T>
-    using increase_sequence = sorted_sequence<T,sequence<T>>;
+    using increase_sequence = sorted_sequence<T>;
 
     template<typename T>
-    using decrease_sequence = sorted_sequence<T,sequence<T>,std::greater<T>>;
+    using decrease_sequence = sorted_sequence<T,std::greater<T>>;
 
-    template<typename T,typename Container,typename Compare>
+    template<typename T,typename Compare,typename Container>
     class sorted_sequence
     :   private Container,
         private Compare
@@ -204,49 +204,68 @@ namespace ads
             std::swap(cmp(),other.cmp());
         }
 
-        template<typename Cont,typename Comp>
-        friend bool operator==(const sorted_sequence<Cont,Comp> & lhs,
-                                const sorted_sequence<Cont,Comp> & rhs)
-        {
-            return lhs.cnt() == rhs.cnt() && lhs.cmp() == rhs.cmp();
-        }
-
-
-        template <typename Cont,typename Comp>
-        friend bool operator!=(const sorted_sequence<Cont,Comp> & lhs,
-                                const sorted_sequence<Cont,Comp> & rhs)
-        {
-            return !(lhs == rhs);
-        }
-
-        template <typename Cont,typename Comp>
-        friend bool operator<(const sorted_sequence<Cont,Comp> & lhs,
-                                const sorted_sequence<Cont,Comp> & rhs)
-        {
-            return lhs.cnt() < rhs.cnt();
-        }
-
-        template <typename Cont,typename Comp>
-        friend bool operator<=(const sorted_sequence<Cont,Comp> & lhs,
-                                const sorted_sequence<Cont,Comp> & rhs)
-        {
-            return lhs < rhs || lhs == rhs;
-        }
-
-        template <typename Cont,typename Comp>
-        friend bool operator>(const sorted_sequence<Cont,Comp> & lhs,
-                                const sorted_sequence<Cont,Comp> & rhs)
-        {
-            return !(lhs <= rhs);
-        }
-
-        template <typename Cont,typename Comp>
-        friend bool operator>=(const sorted_sequence<Cont,Comp> & lhs,
-                                const sorted_sequence<Cont,Comp> & rhs)
-        {
-            return !(lhs < rhs);
-        }
+        template<typename Comp,typename Cont>
+        friend bool operator==(const sorted_sequence<Comp,Cont> & lhs,
+                                const sorted_sequence<Comp,Cont> & rhs);
+        template<typename Comp,typename Cont>
+        friend bool operator!=(const sorted_sequence<Comp,Cont> & lhs,
+                                const sorted_sequence<Comp,Cont> & rhs);
+        template<typename Comp,typename Cont>
+        friend bool operator<(const sorted_sequence<Comp,Cont> & lhs,
+                                const sorted_sequence<Comp,Cont> & rhs);
+        template<typename Comp,typename Cont>
+        friend bool operator<=(const sorted_sequence<Comp,Cont> & lhs,
+                                const sorted_sequence<Comp,Cont> & rhs);
+        template<typename Comp,typename Cont>
+        friend bool operator>(const sorted_sequence<Comp,Cont> & lhs,
+                                const sorted_sequence<Comp,Cont> & rhs);
+        template<typename Comp,typename Cont>
+        friend bool operator>=(const sorted_sequence<Comp,Cont> & lhs,
+                                const sorted_sequence<Comp,Cont> & rhs);
     };
+
+    template<typename Comp,typename Cont>
+    bool operator==(const sorted_sequence<Comp,Cont> & lhs,
+                            const sorted_sequence<Comp,Cont> & rhs)
+    {
+        return lhs.cnt() == rhs.cnt() && lhs.cmp() == rhs.cmp();
+    }
+
+
+    template<typename Comp,typename Cont>
+    bool operator!=(const sorted_sequence<Comp,Cont> & lhs,
+                            const sorted_sequence<Comp,Cont> & rhs)
+    {
+        return !(lhs == rhs);
+    }
+
+    template<typename Comp,typename Cont>
+    bool operator<(const sorted_sequence<Comp,Cont> & lhs,
+                            const sorted_sequence<Comp,Cont> & rhs)
+    {
+        return lhs.cnt() < rhs.cnt();
+    }
+
+    template<typename Comp,typename Cont>
+    bool operator<=(const sorted_sequence<Comp,Cont> & lhs,
+                            const sorted_sequence<Comp,Cont> & rhs)
+    {
+        return lhs < rhs || lhs == rhs;
+    }
+
+    template<typename Comp,typename Cont>
+    bool operator>(const sorted_sequence<Comp,Cont> & lhs,
+                            const sorted_sequence<Comp,Cont> & rhs)
+    {
+        return !(lhs <= rhs);
+    }
+
+    template<typename Comp,typename Cont>
+    bool operator>=(const sorted_sequence<Comp,Cont> & lhs,
+                            const sorted_sequence<Comp,Cont> & rhs)
+    {
+        return !(lhs < rhs);
+    }
 
     template<typename Container,typename Compare>
     void swap(sorted_sequence<Container,Compare> & lhs, sorted_sequence<Container,Compare> & rhs)
