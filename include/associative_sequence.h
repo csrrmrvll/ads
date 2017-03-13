@@ -2,22 +2,22 @@
 #define ADS_ASSOCIATIVE_SEQUENCE_H
 
 #include <functional>
-#include <vector>
 #include <utility>
 #include "algorithm.h"
+#include "sorted_sequence.h"
 #include "range.h"
 
 namespace ads
 {
     namespace Private
     {
-        template<typename Value,typename Comp>
+        template<typename Value,typename Compare>
         class associative_sequence_compare
-        :   public Comp
+        :   public Compare
         {
             using value = Value;
-            using comp = Comp;
-            using typename Comp::first_argument_type;
+            using comp = Compare;
+            using typename Compare::first_argument_type;
             using data = std::pair<first_argument_type,value>;
 
         public:
@@ -55,16 +55,15 @@ namespace ads
     <
         typename Key,
         typename Value,
-        typename Comp  = std::less<Key>,
-        typename Alloc = std::allocator<std::pair<Key,Value>>
+        typename Compare  = std::less<Key>
     >
     class associative_sequence
-    :   private std::vector<std::pair<Key,Value>,Alloc>,
-        private Private::associative_sequence_compare<Value,Comp>
+    :   private sorted_sequence<std::pair<Key,Value>>,
+        private Private::associative_sequence_compare<Value,Compare>
     {
-        using cont = std::vector<std::pair<Key,Value>,Alloc>;
+        using cont = sorted_sequence<std::pair<Key,Value>>;
         using cont::cnt;
-        using comp = Private::associative_sequence_compare<Value,Comp>;
+        using comp = Private::associative_sequence_compare<Value,Compare>;
 
         constexpr comp & cmp()
         {
@@ -77,11 +76,10 @@ namespace ads
         }
 
     public:
-        using key_compare = Comp;
+        using key_compare = Compare;
         using key_type = Key;
         using mapped_type = Value;
         using typename cont::value_type;
-        using typename cont::allocator_type;
         using typename cont::reference;
         using typename cont::const_reference;
         using typename cont::iterator;
@@ -101,7 +99,9 @@ namespace ads
 
         protected:
             value_compare(key_compare pred)
-            :   key_compare(pred) { ; }
+            :   key_compare(pred)
+            {
+            }
 
         public:
             bool operator()(const value_type & lhs,
@@ -111,24 +111,21 @@ namespace ads
             }
         };
 
-        explicit associative_sequence(const key_compare & cmp = key_compare(),
-                                const allocator_type & alloc = allocator_type())
-        :   cont(alloc),
+        explicit associative_sequence(const key_compare & cmp = key_compare())
+        :   cont(),
             comp(cmp)
         {
         }
 
-        template<typename InputIterator>
-        associative_sequence(InputIterator first,InputIterator last,
-                        const key_compare & cmp = key_compare(),
-                        const allocator_type & alloc = allocator_type())
-        :   cont(first,last,alloc),
+        template<typename Iterator>
+        associative_sequence(range<Iterator> && r,
+                             const key_compare & cmp = key_compare())
+        :   cont(r,cmp),
             comp(cmp)
         {
-            sort(cnt(),cmp());
         }
 
-        associative_sequence & operator=(const associative_sequence& rhs)
+        associative_sequence & operator=(const associative_sequence & rhs)
         {
             rhs.swap(*this);
             return *this;
@@ -182,10 +179,7 @@ namespace ads
             }
         }
 
-        void erase(iterator pos)
-        {
-            cont::erase(pos);
-        }
+        using cont::erase;
 
         size_type erase(const key_type & k)
         {
@@ -219,7 +213,7 @@ namespace ads
 
         value_compare value_comp() const
         {
-            return value_compare(key_comp());
+            return value_compare(this->key_comp());
         }
 
         // map operations:
@@ -268,65 +262,82 @@ namespace ads
             return upper_bound(cnt(),k,cmp());
         }
 
-        std::pair<iterator,iterator> equal_range(const key_type & k)
+        range<iterator> equal_range(const key_type & k)
         {
             return equal_range(cnt(),k,cmp());
         }
 
-        std::pair<const_iterator,const_iterator>
-        equal_range(const key_type & k) const
+        range<const_iterator> equal_range(const key_type & k) const
         {
             return equal_range(cnt(),k,cmp());
         }
 
-        template <class K1, class V1, class C1, class A1>
-        friend bool operator==(const associative_sequence<K1, V1, C1, A1>& lhs,
-                                const associative_sequence<K1, V1, C1, A1>& rhs)
-        {
-            return lhs.cnt() == rhs.cnt();
-        }
-
-
-        template <class K1, class V1, class C1, class A1>
-        friend bool operator!=(const associative_sequence<K1, V1, C1, A1>& lhs,
-                                const associative_sequence<K1, V1, C1, A1>& rhs)
-        {
-            return !(lhs == rhs);
-        }
-
-        template <class K1, class V1, class C1, class A1>
-        friend bool operator<(const associative_sequence<K1, V1, C1, A1>& lhs,
-                                const associative_sequence<K1, V1, C1, A1>& rhs)
-        {
-            return lhs.cnt() < rhs.cnt();
-        }
-
-        template <class K1, class V1, class C1, class A1>
-        friend bool operator<=(const associative_sequence<K1, V1, C1, A1>& lhs,
-                                const associative_sequence<K1, V1, C1, A1>& rhs)
-        {
-            return lhs < rhs || lhs == rhs;
-        }
-
-        template <class K1, class V1, class C1, class A1>
-        friend bool operator>(const associative_sequence<K1, V1, C1, A1>& lhs,
-                                const associative_sequence<K1, V1, C1, A1>& rhs)
-        {
-            return !(lhs <= rhs);
-        }
-
-        template <class K1, class V1, class C1, class A1>
-        friend bool operator>=(const associative_sequence<K1, V1, C1, A1>& lhs,
-                                const associative_sequence<K1, V1, C1, A1>& rhs)
-        {
-            return !(lhs < rhs);
-        }
+        template<typename K,typename V,typename C>
+        friend bool operator==(const associative_sequence<K,V,C> & lhs,
+                                const associative_sequence<K,V,C> & rhs);
+        template<typename K,typename V,typename C>
+        friend bool operator!=(const associative_sequence<K,V,C> & lhs,
+                                const associative_sequence<K,V,C> & rhs);
+        template<typename K,typename V,typename C>
+        friend bool operator<(const associative_sequence<K,V,C> & lhs,
+                                const associative_sequence<K,V,C> & rhs);
+        template<typename K,typename V,typename C>
+        friend bool operator<=(const associative_sequence<K,V,C> & lhs,
+                                const associative_sequence<K,V,C> & rhs);
+        template<typename K,typename V,typename C>
+        friend bool operator>(const associative_sequence<K,V,C> & lhs,
+                                const associative_sequence<K,V,C> & rhs);
+        template<typename K,typename V,typename C>
+        friend bool operator>=(const associative_sequence<K,V,C> & lhs,
+                                const associative_sequence<K,V,C> & rhs);
     };
 
     // specialized algorithms:
-    template<typename Key,typename Value,typename Comp,typename Alloc>
-    void swap(associative_sequence<Key,Value,Comp,Alloc>& lhs,
-              associative_sequence<Key,Value,Comp,Alloc>& rhs)
+    template<typename K,typename V,typename C>
+    bool operator==(const associative_sequence<K,V,C> & lhs,
+                            const associative_sequence<K,V,C> & rhs)
+    {
+        return lhs.cnt() == rhs.cnt();
+    }
+
+    template<typename K,typename V,typename C>
+    bool operator!=(const associative_sequence<K,V,C> & lhs,
+                            const associative_sequence<K,V,C> & rhs)
+    {
+        return !(lhs == rhs);
+    }
+
+    template<typename K,typename V,typename C>
+    bool operator<(const associative_sequence<K,V,C> & lhs,
+                            const associative_sequence<K,V,C> & rhs)
+    {
+        return lhs.cnt() < rhs.cnt();
+    }
+
+    template<typename K,typename V,typename C>
+    bool operator<=(const associative_sequence<K,V,C> & lhs,
+                            const associative_sequence<K,V,C> & rhs)
+    {
+        return lhs < rhs || lhs == rhs;
+    }
+
+    template<typename K,typename V,typename C>
+    bool operator>(const associative_sequence<K,V,C> & lhs,
+                            const associative_sequence<K,V,C> & rhs)
+    {
+        return !(lhs <= rhs);
+    }
+
+    template<typename K,typename V,typename C>
+    bool operator>=(const associative_sequence<K,V,C> & lhs,
+                            const associative_sequence<K,V,C> & rhs)
+    {
+        return !(lhs < rhs);
+    }
+
+    template<typename K,typename V,typename C>
+    void swap(associative_sequence<K,V,C> & lhs,
+              associative_sequence<K,V,C> & rhs)
     {
         lhs.swap(rhs);
     }

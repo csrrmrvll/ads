@@ -57,14 +57,17 @@ namespace ads
         // Member types
         using container_type = cont;
         using value_compare = comp;
-        using typename cont::value_type;
-        using typename cont::size_type;
-        using typename cont::iterator;
-        using typename cont::const_iterator;
-        using typename cont::reverse_iterator;
-        using typename cont::const_reverse_iterator;
-        using typename cont::reference;
-        using typename cont::const_reference;
+        using value_type = typename cont::value_type;
+        using size_type = typename cont::size_type;
+        using difference_type = typename cont::difference_type;
+        using reference = typename cont::reference;
+        using const_reference = typename cont::const_reference;
+        using pointer = typename cont::pointer;
+        using const_pointer = typename cont::const_pointer;
+        using iterator = typename cont::iterator;
+        using const_iterator = typename cont::const_iterator;
+        using reverse_iterator = typename cont::reverse_iterator;
+        using const_reverse_iterator = typename cont::const_reverse_iterator;
         // Member functions
         // Constructor
         explicit sorted_sequence(const Compare & cmp = Compare(), Container && c = Container())
@@ -117,6 +120,8 @@ namespace ads
         {
             this->push(r);
         }
+        // Destructor
+        ~sorted_sequence() = default;
         // Copy constructor
         sorted_sequence(const sorted_sequence & other) = default;
         // Move constructor
@@ -132,12 +137,24 @@ namespace ads
             this->swap(other);
             return *this;
         }
-        // Destructor
-        ~sorted_sequence() = default;
+        // Assign
+        template<typename Iterator>
+        void assign(range<Iterator> && r)
+        {
+            this->operator=(r);
+        }
+
+        void assign(std::initializer_list<T> il)
+        {
+            this->operator=(il);
+        }
         // Access
         using cont::at;
+        using cont::operator[];
         using cont::front;
         using cont::back;
+        using cont::data;
+        // Iterators
         using cont::begin;
         using cont::cbegin;
         using cont::rbegin;
@@ -164,7 +181,7 @@ namespace ads
 
         void push(value_type && v)
         {
-            this->push_back(std::move(v));
+            cont::push_back(std::move(v));
             push_heap(cnt(),cmp());
         }
 
@@ -180,19 +197,29 @@ namespace ads
         template<typename... Args>
         void emplace(Args && ...args)
         {
-            this->emplace(std::forward<Args>(args)...);
+            cont::emplace(std::forward<Args>(args)...);
             this->sort();
         }
 
         iterator erase(const value_type & v)
         {
-            auto r = equal_range(cnt(),v,comp());
+            auto r = equal_range(cnt(),v,cmp());
             return cont::erase(std::begin(r),std::end(r));
+        }
+
+        iterator erase(range<iterator> && r)
+        {
+            iterator it = cont::end();
+            for (auto v : r)
+            {
+                this->erase(v);
+            }
+            return it;
         }
 
         value_type pop()
         {
-            auto v = this->top();
+            auto v = cont::front();
             pop_heap(cnt(),cmp());
             cont::pop_back();
             return v;

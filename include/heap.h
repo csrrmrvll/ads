@@ -36,6 +36,10 @@ namespace ads
         using typename cont::const_reference;
         // Member functions
         // Constructor (compiler generated)
+        heap(const Compare & cmp)
+        :   cont(cmp)
+        {
+        }
         // Destructor (compiler generated)
         // Copy constructor (compiler generated)
         // operator= (compiler generated)

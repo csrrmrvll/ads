@@ -56,6 +56,7 @@ namespace ads
         using cont::operator[];
         using cont::front;
         using cont::back;
+        using cont::data;
         // Iterators
         using cont::begin;
         using cont::cbegin;
@@ -97,63 +98,63 @@ namespace ads
         using cont::swap;
 
         template<typename U,typename Cont>
-        friend bool operator==(const associative_sequence<U,Cont> & lhs,
-                                const associative_sequence<U,Cont> & rhs);
+        friend bool operator==(const sequence<U,Cont> & lhs,
+                                const sequence<U,Cont> & rhs);
         template<typename U,typename Cont>
-        friend bool operator!=(const associative_sequence<U,Cont> & lhs,
-                                const associative_sequence<U,Cont> & rhs);
+        friend bool operator!=(const sequence<U,Cont> & lhs,
+                                const sequence<U,Cont> & rhs);
         template<typename U,typename Cont>
-        friend bool operator<(const associative_sequence<U,Cont> & lhs,
-                                const associative_sequence<U,Cont> & rhs);
+        friend bool operator<(const sequence<U,Cont> & lhs,
+                                const sequence<U,Cont> & rhs);
         template<typename U,typename Cont>
-        friend bool operator<=(const associative_sequence<U,Cont> & lhs,
-                                const associative_sequence<U,Cont> & rhs);
+        friend bool operator<=(const sequence<U,Cont> & lhs,
+                                const sequence<U,Cont> & rhs);
         template<typename U,typename Cont>
-        friend bool operator>(const associative_sequence<U,Cont> & lhs,
-                                const associative_sequence<U,Cont> & rhs);
+        friend bool operator>(const sequence<U,Cont> & lhs,
+                                const sequence<U,Cont> & rhs);
         template<typename U,typename Cont>
-        friend bool operator>=(const associative_sequence<U,Cont> & lhs,
-                                const associative_sequence<U,Cont> & rhs);
+        friend bool operator>=(const sequence<U,Cont> & lhs,
+                                const sequence<U,Cont> & rhs);
     };
 
     template<typename T,typename Container>
-    bool operator==(const associative_sequence<T,Container> & lhs,
-                    const associative_sequence<T,Container> & rhs)
+    bool operator==(const sequence<T,Container> & lhs,
+                    const sequence<T,Container> & rhs)
     {
         return lhs.cnt() == rhs.cnt();
     }
 
     template<typename T,typename Container>
-    bool operator!=(const associative_sequence<T,Container> & lhs,
-                    const associative_sequence<T,Container> & rhs)
+    bool operator!=(const sequence<T,Container> & lhs,
+                    const sequence<T,Container> & rhs)
     {
         return !(lhs == rhs);
     }
 
     template<typename T,typename Container>
-    bool operator<(const associative_sequence<T,Container> & lhs,
-                    const associative_sequence<T,Container> & rhs)
+    bool operator<(const sequence<T,Container> & lhs,
+                    const sequence<T,Container> & rhs)
     {
         return lhs.cnt() < rhs.cnt();
     }
 
     template<typename T,typename Container>
-    bool operator<=(const associative_sequence<T,Container> & lhs,
-                    const associative_sequence<T,Container> & rhs)
+    bool operator<=(const sequence<T,Container> & lhs,
+                    const sequence<T,Container> & rhs)
     {
         return lhs < rhs || lhs == rhs;
     }
 
     template<typename T,typename Container>
-    bool operator>(const associative_sequence<T,Container> & lhs,
-                    const associative_sequence<T,Container> & rhs)
+    bool operator>(const sequence<T,Container> & lhs,
+                    const sequence<T,Container> & rhs)
     {
         return !(lhs <= rhs);
     }
 
     template<typename T,typename Container>
-    bool operator>=(const associative_sequence<T,Container> & lhs,
-                    const associative_sequence<T,Container> & rhs)
+    bool operator>=(const sequence<T,Container> & lhs,
+                    const sequence<T,Container> & rhs)
     {
         return !(lhs < rhs);
     }
