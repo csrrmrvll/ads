@@ -5,12 +5,7 @@
 
 namespace ads
 {
-    template
-    <
-        typename T,
-        typename Compare = std::less<T>,
-        typename Container = sorted_sequence<T,Compare>
-    >
+    template<typename T,typename Compare = std::less<T>>
     class heap;
 
     template<typename T>
@@ -19,14 +14,24 @@ namespace ads
     template<typename T>
     using max_heap = heap<T,std::greater<T>>;
 
-    template<typename T,typename Compare,typename Container>
+    template<typename T,typename Compare>
     class heap
-    :   private Container
+    :   private sorted_sequence<T,Compare>
     {
+        using cont = sorted_sequence<T,Compare>;
+        constexpr cont & cnt()
+        {
+            return *this;
+        }
+
+        constexpr const cont & cnt() const
+        {
+            return *this;
+        }
+
     public:
         // Member types
-        using cont = Container;
-        using container_type = cont;
+        using container_type = typename cont::container_type;
         using value_compare = Compare;
         using typename cont::value_type;
         using typename cont::size_type;
@@ -35,14 +40,61 @@ namespace ads
         using typename cont::reference;
         using typename cont::const_reference;
         // Member functions
-        // Constructor (compiler generated)
-        heap(const Compare & cmp)
+        // Constructor
+        explicit heap(const Compare & cmp = Compare())
         :   cont(cmp)
         {
         }
-        // Destructor (compiler generated)
-        // Copy constructor (compiler generated)
-        // operator= (compiler generated)
+
+        template<typename Container>
+        explicit heap(const Compare & cmp, Container && c)
+        :   cont(cmp,std::move(c))
+        {
+        }
+
+        heap(std::initializer_list<value_type> il)
+        :   cont{std::move(il)}
+        {
+        }
+
+        heap(std::initializer_list<value_type> il, const Compare & cmp)
+        :   cont(std::move(il),cmp)
+        {
+        }
+
+        heap(std::initializer_list<value_type> il, Compare && cmp)
+        :   cont(std::move(il),std::move(cmp))
+        {
+        }
+
+        template<typename Iterator>
+        heap(range<Iterator> && r, const Compare & cmp)
+        :   cont(cmp)
+        {
+        }
+
+        template<typename Iterator>
+        heap(range<Iterator> && r, Compare && cmp = Compare())
+        :   cont(r,std::move(cmp))
+        {
+        }
+        // Destructor
+        ~heap() = default;
+        // Copy constructor
+        heap(const heap &) = default;
+        // Move constructor
+        heap(heap &&) = default;
+        // Copy-assignment operator
+        heap & operator=(const heap &) = default;
+        // Move-assignment operator
+        heap & operator=(heap &&) = default;
+        // Assignment from initializer list operator
+        heap & operator=(std::initializer_list<value_type> il)
+        {
+            heap other{il};
+            this->swap(other);
+            return *this;
+        }
         // Access
         reference top()
         {
@@ -71,10 +123,65 @@ namespace ads
         using cont::erase;
         using cont::pop;
         using cont::swap;
+
+        template<typename U,typename Comp>
+        friend bool operator==(const heap<U,Comp> & lhs,
+                               const heap<U,Comp> & rhs);
+        template<typename U,typename Comp>
+        friend bool operator!=(const heap<U,Comp> & lhs,
+                               const heap<U,Comp> & rhs);
+        template<typename U,typename Comp>
+        friend bool operator<(const heap<U,Comp> & lhs,
+                              const heap<U,Comp> & rhs);
+        template<typename U,typename Comp>
+        friend bool operator<=(const heap<U,Comp> & lhs,
+                               const heap<U,Comp> & rhs);
+        template<typename U,typename Comp>
+        friend bool operator>(const heap<U,Comp> & lhs,
+                              const heap<U,Comp> & rhs);
+        template<typename U,typename Comp>
+        friend bool operator>=(const heap<U,Comp> & lhs,
+                               const heap<U,Comp> & rhs);
     };
 
-    template<typename Container,typename Compare>
-    void swap(heap<Container,Compare> & lhs, heap<Container,Compare> & rhs)
+    template<typename T,typename Compare>
+    bool operator==(const heap<T,Compare> & lhs, const heap<T,Compare> & rhs)
+    {
+        return lhs.cnt() == rhs.cnt();
+    }
+
+    template<typename T,typename Compare>
+    bool operator!=(const heap<T,Compare> & lhs, const heap<T,Compare> & rhs)
+    {
+        return !(lhs == rhs);
+    }
+
+    template<typename T,typename Compare>
+    bool operator<(const heap<T,Compare> & lhs, const heap<T,Compare> & rhs)
+    {
+        return lhs.cnt() < rhs.cnt();
+    }
+
+    template<typename T,typename Compare>
+    bool operator<=(const heap<T,Compare> & lhs, const heap<T,Compare> & rhs)
+    {
+        return lhs < rhs || lhs == rhs;
+    }
+
+    template<typename T,typename Compare>
+    bool operator>(const heap<T,Compare> & lhs, const heap<T,Compare> & rhs)
+    {
+        return !(lhs <= rhs);
+    }
+
+    template<typename T,typename Compare>
+    bool operator>=(const heap<T,Compare> & lhs, const heap<T,Compare> & rhs)
+    {
+        return !(lhs < rhs);
+    }
+
+    template<typename T,typename Compare>
+    void swap(heap<T,Compare> & lhs, heap<T,Compare> & rhs)
     {
         lhs.swap(rhs);
     }

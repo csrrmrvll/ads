@@ -13,7 +13,6 @@ namespace ads
     class sequence
     :   private Container
     {
-    protected:
         using cont = Container;
 
         constexpr cont & cnt()
