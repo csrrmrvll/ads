@@ -28,21 +28,53 @@ namespace ads
     public:
         // Member types
         using container_type = cont;
-        using typename cont::value_type;
-        using typename cont::size_type;
-        using typename cont::difference_type;
-        using typename cont::reference;
-        using typename cont::const_reference;
-        using typename cont::pointer;
-        using typename cont::const_pointer;
-        using typename cont::iterator;
-        using typename cont::const_iterator;
-        using typename cont::reverse_iterator;
-        using typename cont::const_reverse_iterator;
+        using value_type = typename cont::value_type;
+        using size_type = typename cont::size_type;
+        using difference_type = typename cont::difference_type;
+        using reference = typename cont::reference;
+        using const_reference = typename cont::const_reference;
+        using pointer = typename cont::pointer;
+        using const_pointer = typename cont::const_pointer;
+        using iterator = typename cont::iterator;
+        using const_iterator = typename cont::const_iterator;
+        using reverse_iterator = typename cont::reverse_iterator;
+        using const_reverse_iterator = typename cont::const_reverse_iterator;
         // Member functions
-        // Constructor (compiler generated)
-        // Destructor (compiler generated)
-        // operator= (compiler generated)
+        // Constructor
+        sequence() = default;
+        explicit sequence(size_type count, const T & value = T())
+        :   cont(count,value)
+        {
+        }
+
+        template<typename Iterator>
+        sequence(range<Iterator> && r)
+        :   cont(std::begin(r),std::end(r))
+        {
+        }
+
+        sequence(std::initializer_list<value_type> il)
+        :   cont{std::move(il)}
+        {
+        }
+        // Destructor
+        ~sequence() = default;
+        // Copy constructor
+        sequence(const sequence & other) = default;
+        // Move constructor
+        sequence(sequence && other) = default;
+        // Copy-assignment operator
+        sequence & operator=(const sequence & other) = default;
+        // Move-assignment operator
+        sequence & operator=(sequence && other) = default;
+        // Assignment from initializer list operator
+        sequence & operator=(std::initializer_list<value_type> il)
+        {
+            sequence other(il);
+            this->swap(other);
+            return *this;
+        }
+        // Assign
         using cont::assign;
 
         template<typename Iterator>
@@ -98,29 +130,29 @@ namespace ads
 
         template<typename U,typename Cont>
         friend bool operator==(const sequence<U,Cont> & lhs,
-                                const sequence<U,Cont> & rhs);
+                               const sequence<U,Cont> & rhs);
         template<typename U,typename Cont>
         friend bool operator!=(const sequence<U,Cont> & lhs,
-                                const sequence<U,Cont> & rhs);
+                               const sequence<U,Cont> & rhs);
         template<typename U,typename Cont>
         friend bool operator<(const sequence<U,Cont> & lhs,
-                                const sequence<U,Cont> & rhs);
+                              const sequence<U,Cont> & rhs);
         template<typename U,typename Cont>
         friend bool operator<=(const sequence<U,Cont> & lhs,
-                                const sequence<U,Cont> & rhs);
+                               const sequence<U,Cont> & rhs);
         template<typename U,typename Cont>
         friend bool operator>(const sequence<U,Cont> & lhs,
-                                const sequence<U,Cont> & rhs);
+                              const sequence<U,Cont> & rhs);
         template<typename U,typename Cont>
         friend bool operator>=(const sequence<U,Cont> & lhs,
-                                const sequence<U,Cont> & rhs);
+                               const sequence<U,Cont> & rhs);
     };
 
     template<typename T,typename Container>
     bool operator==(const sequence<T,Container> & lhs,
                     const sequence<T,Container> & rhs)
     {
-        return lhs.cnt() == rhs.cnt();
+        return Container::operator=(lhs,rhs);
     }
 
     template<typename T,typename Container>
@@ -134,7 +166,7 @@ namespace ads
     bool operator<(const sequence<T,Container> & lhs,
                     const sequence<T,Container> & rhs)
     {
-        return lhs.cnt() < rhs.cnt();
+        return Container::operator<(lhs,rhs);
     }
 
     template<typename T,typename Container>
