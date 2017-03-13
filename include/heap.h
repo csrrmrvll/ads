@@ -124,24 +124,18 @@ namespace ads
         using cont::pop;
         using cont::swap;
 
-        template<typename U,typename Comp>
-        friend bool operator==(const heap<U,Comp> & lhs,
-                               const heap<U,Comp> & rhs);
-        template<typename U,typename Comp>
-        friend bool operator!=(const heap<U,Comp> & lhs,
-                               const heap<U,Comp> & rhs);
-        template<typename U,typename Comp>
-        friend bool operator<(const heap<U,Comp> & lhs,
-                              const heap<U,Comp> & rhs);
-        template<typename U,typename Comp>
-        friend bool operator<=(const heap<U,Comp> & lhs,
-                               const heap<U,Comp> & rhs);
-        template<typename U,typename Comp>
-        friend bool operator>(const heap<U,Comp> & lhs,
-                              const heap<U,Comp> & rhs);
-        template<typename U,typename Comp>
-        friend bool operator>=(const heap<U,Comp> & lhs,
-                               const heap<U,Comp> & rhs);
+        template<typename U,typename C>
+        friend bool operator==(const heap<U,C> & lhs, const heap<U,C> & rhs);
+        template<typename U,typename C>
+        friend bool operator!=(const heap<U,C> & lhs, const heap<U,C> & rhs);
+        template<typename U,typename C>
+        friend bool operator<(const heap<U,C> & lhs, const heap<U,C> & rhs);
+        template<typename U,typename C>
+        friend bool operator<=(const heap<U,C> & lhs, const heap<U,C> & rhs);
+        template<typename U,typename C>
+        friend bool operator>(const heap<U,C> & lhs, const heap<U,C> & rhs);
+        template<typename U,typename C>
+        friend bool operator>=(const heap<U,C> & lhs, const heap<U,C> & rhs);
     };
 
     template<typename T,typename Compare>
