@@ -68,7 +68,6 @@
 		<Unit filename="include/range.h" />
 		<Unit filename="include/sequence.h" />
 		<Unit filename="include/sorted_sequence.h" />
-		<Unit filename="src/test.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
