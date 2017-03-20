@@ -11,184 +11,184 @@
 
 namespace ads
 {
-    template<typename Container>
-    bool is_end(const Container & c, typename Container::const_iterator it)
+    template<typename Range>
+    bool is_end(const Range & r, typename Range::const_iterator it)
     {
-        return end(c) == it;
+        return end(r) == it;
     }
 
-    template<typename Container>
-    bool not_end(const Container & c, typename Container::const_iterator it)
+    template<typename Range>
+    bool not_end(const Range & r, typename Range::const_iterator it)
     {
-        return !is_end(c,it);
+        return !is_end(r,it);
     }
 
-    template<typename Container,typename UnaryPredicate>
-    bool allOf(const Container & c, UnaryPredicate p)
+    template<typename Range,typename UnaryPredicate>
+    bool allOf(const Range & r, UnaryPredicate p)
     {
-        return std::all_of(begin(c),end(c),p);
+        return std::all_of(begin(r),end(r),p);
     }
 
-    template<typename Container,typename UnaryPredicate>
-    bool anyOf(const Container & c, UnaryPredicate p)
+    template<typename Range,typename UnaryPredicate>
+    bool anyOf(const Range & r, UnaryPredicate p)
     {
-        return std::any_of(begin(c),end(c),p);
+        return std::any_of(begin(r),end(r),p);
     }
 
-    template<typename Container,typename UnaryPredicate>
-    bool noneOf(const Container & c, UnaryPredicate p )
+    template<typename Range,typename UnaryPredicate>
+    bool noneOf(const Range & r, UnaryPredicate p )
     {
-        return std::none_of(begin(c),end(c),p);
+        return std::none_of(begin(r),end(r),p);
     }
 
-    template<typename Container,typename UnaryFunction> inline
-    UnaryFunction forEach(const Container & c, UnaryFunction f)
+    template<typename Range,typename UnaryFunction> inline
+    UnaryFunction forEach(const Range & r, UnaryFunction f)
     {
-        return std::for_each(begin(c),end(c),f);
+        return std::for_each(begin(r),end(r),f);
     }
 
-    template<typename Container,typename OutputIterator>
-    OutputIterator copy(const Container & c, OutputIterator oit)
+    template<typename Range,typename OutputIterator>
+    OutputIterator copy(const Range & r, OutputIterator oit)
     {
-        return std::copy(begin(c),end(c),oit);
+        return std::copy(begin(r),end(r),oit);
     }
 
-    template<typename Container,typename OutputIterator,typename UnaryPredicate>
-    OutputIterator copy_if(const Container & c, OutputIterator oit, UnaryPredicate p)
+    template<typename Range,typename OutputIterator,typename UnaryPredicate>
+    OutputIterator copy_if(const Range & r, OutputIterator oit, UnaryPredicate p)
     {
-        return std::copy_if(begin(c),end(c),oit,p);
+        return std::copy_if(begin(r),end(r),oit,p);
     }
 
-    template<typename Container>
-    typename std::iterator_traits<typename Container::const_iterator>::difference_type
-    count(const Container & c, const typename Container::value_type & v)
+    template<typename Range>
+    typename std::iterator_traits<typename Range::iterator>::difference_type
+    count(const Range & r, const typename Range::value_type & v)
     {
-        return std::count(begin(c),end(c),v);
+        return std::count(begin(r),end(r),v);
     }
 
-    template<typename Container,typename UnaryPredicate>
-    typename std::iterator_traits<typename Container::const_iterator>::difference_type
-    count_if(const Container & c, UnaryPredicate p)
+    template<typename Range,typename UnaryPredicate>
+    typename std::iterator_traits<typename Range::iterator>::difference_type
+    count_if(const Range & r, UnaryPredicate p)
     {
-        return std::count_if(begin(c),end(c),p);
+        return std::count_if(begin(r),end(r),p);
     }
 
-    template<typename Container>
-    range<typename Container::iterator>
-    equal_range(const Container & c, const typename Container::value_type & v)
+    template<typename Range>
+    range<typename Range::iterator>
+    equal_range(const Range & r, const typename Range::value_type & v)
     {
-        return std::equal_range(begin(c),end(c),v);
+        return std::equal_range(begin(r),end(r),v);
     }
 
-    template<typename Container,typename UnaryPredicate>
-    range<typename Container::const_iterator>
-    equal_range(const Container & c, const typename Container::value_type & v, UnaryPredicate p)
+    template<typename Range,typename UnaryPredicate>
+    range<typename Range::iterator>
+    equal_range(const Range & r, const typename Range::value_type & v, UnaryPredicate p)
     {
-        return make_range(std::equal_range(begin(c),end(c),v,p));
+        return make_range(std::equal_range(begin(r),end(r),v,p));
     }
 
-    template<typename Container>
+    template<typename Range>
     struct find_result
     {
-        using const_iterator = typename Container::const_iterator;
+        using const_iterator = typename Range::const_iterator;
 
         const_iterator pos;
         bool found;
     };
 
-    template<typename Container>
-    find_result<Container> make_find_result(const Container & c, typename Container::const_iterator it)
+    template<typename Range>
+    find_result<Range> make_find_result(const Range & r, typename Range::const_iterator it)
     {
-        return find_result<Container>{it,not_end(c,it)};
+        return find_result<Range>{it,not_end(r,it)};
     }
 
-    template<typename Container>
-    find_result<Container> find(const Container & c, const typename Container::value_type & v)
+    template<typename Range>
+    find_result<Range> find(const Range & r, const typename Range::value_type & v)
     {
-        auto it = std::find(begin(c),end(c),v);
-        return make_find_result(c,it);
+        auto it = std::find(begin(r),end(r),v);
+        return make_find_result(r,it);
     }
 
-    template<typename Container,typename UnaryPredicate>
-    find_result<Container> find_if(const Container & c, UnaryPredicate p)
+    template<typename Range,typename UnaryPredicate>
+    find_result<Range> find_if(const Range & r, UnaryPredicate p)
     {
-        auto it = std::find_if(begin(c),end(c),p);
-        return make_find_result(c,it);
+        auto it = std::find_if(begin(r),end(r),p);
+        return make_find_result(r,it);
     }
 
-    template<typename Container,typename UnaryPredicate>
-    find_result<Container> find_if_not(const Container & c, UnaryPredicate p)
+    template<typename Range,typename UnaryPredicate>
+    find_result<Range> find_if_not(const Range & r, UnaryPredicate p)
     {
-        auto it = std::find_if_not(begin(c),end(c),p);
-        return make_find_result(c,it);
+        auto it = std::find_if_not(begin(r),end(r),p);
+        return make_find_result(r,it);
     }
 
-    template<typename Container, typename T>
-    void iota(Container & c, T value)
+    template<typename Range, typename T>
+    void iota(Range & r, T value)
     {
-        return std::iota(begin(c),end(c),value);
+        return std::iota(begin(r),end(r),value);
     }
 
-    template<typename Container>
-    bool is_heap(const Container & c)
+    template<typename Range>
+    bool is_heap(const Range & r)
     {
-        return std::is_heap(begin(c),end(c));
+        return std::is_heap(begin(r),end(r));
     }
 
-    template<typename Container,typename Compare>
-    bool is_heap(const Container & c, Compare comp)
+    template<typename Range,typename Compare>
+    bool is_heap(const Range & r, Compare comp)
     {
-        return std::is_heap(begin(c),end(c),comp);
+        return std::is_heap(begin(r),end(r),comp);
     }
 
-    template<typename Container>
-    range<typename Container::iterator>
-    lower_bound(const Container & c, const typename Container::value_type & v)
+    template<typename Range>
+    range<typename Range::iterator>
+    lower_bound(const Range & r, const typename Range::value_type & v)
     {
-        return std::lower_bound(begin(c),end(c),v);
+        return std::lower_bound(begin(r),end(r),v);
     }
 
-    template<typename Container>
-    void make_heap(Container & c)
+    template<typename Range>
+    void make_heap(Range & r)
     {
-        return std::make_heap(begin(c),end(c));
+        return std::make_heap(begin(r),end(r));
     }
 
-    template<typename Container,typename Compare>
-    void make_heap(Container & c, Compare comp)
+    template<typename Range,typename Compare>
+    void make_heap(Range & r, Compare comp)
     {
-        return std::make_heap(begin(c),end(c),comp);
+        return std::make_heap(begin(r),end(r),comp);
     }
 
-    template<typename Container>
-    void pop_heap(Container & c)
+    template<typename Range>
+    void pop_heap(Range & r)
     {
-        return std::pop_heap(begin(c),end(c));
+        return std::pop_heap(begin(r),end(r));
     }
 
-    template<typename Container,typename Compare>
-    void pop_heap(Container & c, Compare comp)
+    template<typename Range,typename Compare>
+    void pop_heap(Range & r, Compare comp)
     {
-        return std::pop_heap(begin(c),end(c),comp);
+        return std::pop_heap(begin(r),end(r),comp);
     }
 
-    template<typename Container>
-    void push_heap(Container & c)
+    template<typename Range>
+    void push_heap(Range & r)
     {
-        return std::push_heap(begin(c),end(c));
+        return std::push_heap(begin(r),end(r));
     }
 
-    template<typename Container,typename Compare>
-    void push_heap(Container & c, Compare comp)
+    template<typename Range,typename Compare>
+    void push_heap(Range & r, Compare comp)
     {
-        return std::push_heap(begin(c),end(c),comp);
+        return std::push_heap(begin(r),end(r),comp);
     }
 
-    template<typename Container,typename UnaryPredicate>
-    range<typename Container::iterator>
-    upper_bound(const Container & c, const typename Container::value_type & v, UnaryPredicate p)
+    template<typename Range,typename UnaryPredicate>
+    range<typename Range::iterator>
+    upper_bound(const Range & r, const typename Range::value_type & v, UnaryPredicate p)
     {
-        return std::upper_bound(begin(c),end(c),v,p);
+        return std::upper_bound(begin(r),end(r),v,p);
     }
 
     template<typename Iterator>

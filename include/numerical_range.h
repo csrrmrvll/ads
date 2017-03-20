@@ -1,26 +1,104 @@
-#ifndef NUMERICAL_RANGE_H
-#define NUMERICAL_RANGE_H
+#ifndef ADS_NUMERICAL_RANGE_H
+#define ADS_NUMERICAL_RANGE_H
 
-#include <vector>
-#include "algorithm.h"
+#include <utility>
 
 namespace ads
 {
     template<typename Integral>
-    class numerical_range
-    :   private std::vector<Integral>
+    class numerical_range_iterator
     {
-        using base = std::vector<Integral>;
     public:
-        using base::iterator;
-        using base::value_type;
-        using base::begin;
-        using base::end;
-
-        numerical_range(Integral first, Integral last)
-        :   base(last - first + 1)
+        explicit numerical_range_iterator(Integral & i)
+        :   element(i)
         {
-            iota(*this,first);
+        }
+
+        using value_type = Integral;
+        value_type operator*() const
+        {
+            return this->element;
+        }
+
+        numerical_range_iterator & operator++()
+        {
+            ++this->element;
+            return *this;
+        }
+
+        numerical_range_iterator operator++(int)
+        {
+            return this->element++;
+        }
+
+    private:
+        Integral & element;
+    };
+
+    template<typename Integral>
+    bool operator==(const numerical_range_iterator<Integral> & lhs,
+                    const numerical_range_iterator<Integral> & rhs)
+    {
+        return *lhs == *rhs;
+    }
+
+    template<typename Integral>
+    bool operator!=(const numerical_range_iterator<Integral> & lhs,
+                    const numerical_range_iterator<Integral> & rhs)
+    {
+        return *lhs != *rhs;
+    }
+
+    template<typename Integral>
+    bool operator<(const numerical_range_iterator<Integral> & lhs,
+                    const numerical_range_iterator<Integral> & rhs)
+    {
+        return *lhs < *rhs;
+    }
+
+    template<typename Integral>
+    bool operator<=(const numerical_range_iterator<Integral> & lhs,
+                    const numerical_range_iterator<Integral> & rhs)
+    {
+        return *lhs <= *rhs;
+    }
+
+    template<typename Integral>
+    bool operator>(const numerical_range_iterator<Integral> & lhs,
+                    const numerical_range_iterator<Integral> & rhs)
+    {
+        return *lhs > *rhs;
+    }
+
+    template<typename Integral>
+    bool operator>=(const numerical_range_iterator<Integral> & lhs,
+                    const numerical_range_iterator<Integral> & rhs)
+    {
+        return *lhs >= *rhs;
+    }
+
+    template<typename Integral>
+    class numerical_range
+    :   private std::pair<Integral,Integral>
+    {
+        using base = std::pair<Integral,Integral>;
+    public:
+        numerical_range(Integral first, Integral last)
+        :   base(first,last)
+        {
+        }
+
+        using iterator = numerical_range_iterator<Integral>;
+        using value_type = typename iterator::value_type;
+
+        iterator begin()
+        {
+            return iterator(this->first);
+        }
+
+        iterator end()
+        {
+            return iterator(this->second);
         }
     };
 
@@ -31,4 +109,4 @@ namespace ads
     }
 }
 
-#endif // NUMERICAL_RANGE_H
+#endif // ADS_NUMERICAL_RANGE_H

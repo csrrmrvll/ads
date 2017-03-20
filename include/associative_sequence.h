@@ -79,17 +79,17 @@ namespace ads
         using key_compare = Compare;
         using key_type = Key;
         using mapped_type = Value;
-        using typename cont::value_type;
-        using typename cont::reference;
-        using typename cont::const_reference;
-        using typename cont::iterator;
-        using typename cont::const_iterator;
-        using typename cont::size_type;
-        using typename cont::difference_type;
-        using typename cont::pointer;
-        using typename cont::const_pointer;
-        using typename cont::reverse_iterator;
-        using typename cont::const_reverse_iterator;
+        using value_type = typename cont::value_type;
+        using reference = typename cont::reference;
+        using const_reference = typename cont::const_reference;
+        using iterator = typename cont::iterator;
+        using const_iterator = typename cont::const_iterator;
+        using reverse_iterator = typename cont::reverse_iterator;
+        using const_reverse_iterator = typename cont::const_reverse_iterator;
+        using size_type = typename cont::size_type;
+        using difference_type = typename cont::difference_type;
+        using pointer = typename cont::pointer;
+        using const_pointer = typename cont::const_pointer;
 
         class value_compare
         :   public std::binary_function<value_type,value_type,bool>,
@@ -150,14 +150,13 @@ namespace ads
         // modifiers:
         std::pair<iterator,bool> insert(const value_type & val)
         {
-            bool found = true;
             iterator i(this->lower_bound(val.first));
             if (i == this->end() || this->operator()(val.first,i->first))
             {
                 i = cont::insert(i,val);
-                found = false;
+                return {i,false};
             }
-            return {i,found};
+            return {i,true};
         }
 
         iterator insert(iterator pos,const value_type & val)
