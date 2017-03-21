@@ -83,6 +83,11 @@ namespace ads
     {
         using base = std::pair<Integral,Integral>;
     public:
+        numerical_range(Integral last)
+        :   base(0,last)
+        {
+        }
+
         numerical_range(Integral first, Integral last)
         :   base(first,last)
         {
@@ -103,9 +108,15 @@ namespace ads
     };
 
     template<typename Integral>
+    numerical_range<Integral> make_numerical_range(Integral last)
+    {
+        return numerical_range<Integral>(last);
+    }
+
+    template<typename Integral>
     numerical_range<Integral> make_numerical_range(Integral first, Integral last)
     {
-        return numerical_range<Integral>(first, last);
+        return numerical_range<Integral>(first,last);
     }
 }
 

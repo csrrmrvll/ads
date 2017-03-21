@@ -17,7 +17,7 @@ namespace ads
         {
             using value = Value;
             using comp = Compare;
-            using typename Compare::first_argument_type;
+            using first_argument_type = typename Compare::first_argument_type;
             using data = std::pair<first_argument_type,value>;
 
         public:
