@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <iterator>
+#include <numeric>
 #include "range.h"
 
 namespace ads
