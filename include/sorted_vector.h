@@ -200,7 +200,7 @@ namespace ads
         value_type pop()
         {
             auto v = this->top();
-            pop_heap(*this,this->comp);
+            pop_heap(*this,comp());
             cont::pop_back();
             return v;
         }
