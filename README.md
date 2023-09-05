@@ -4,10 +4,12 @@
 
 [vscode c++ config](https://code.visualstudio.com/docs/cpp/config-wsl)
 
-`sudo apt install build-essential gdb -y`
+```txt
+sudo apt install build-essential gdb -y
+```
 
 ## Add the needed flags to compiler call
 
 ```txt
-- I include/ -std=c++20
+- I {ads-path}/include/ -std=c++20
 ```

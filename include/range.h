@@ -38,7 +38,7 @@ namespace ads
     template<typename Iterator>
     range<Iterator> make_range(range_pair<Iterator> && p)
     {
-        return range<Iterator>(p);
+        return range<Iterator>(p.first,p.second);
     }
 }
 
